@@ -81,7 +81,7 @@ export default function DistributionsPage() {
       />
 
       {/* ── Interactive engine ── */}
-      <div className="px-8 pt-8 pb-2">
+      <div className="px-4 pt-6 pb-2 md:px-8 md:pt-8">
         <div
           className="overflow-hidden rounded-md border border-border bg-surface"
           style={{ height: 560 }}
@@ -93,7 +93,7 @@ export default function DistributionsPage() {
         </p>
       </div>
 
-      <div className="px-8 py-8 space-y-10">
+      <div className="px-4 py-6 md:px-8 md:py-8 space-y-10">
 
         {[
           { label: 'Continuous Distributions', items: continuous },

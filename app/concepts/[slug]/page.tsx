@@ -6,6 +6,7 @@ import { getAllConceptSlugs, getConceptBySlug, extractToc } from '@/lib/content/
 import { DIFFICULTY_LABEL } from '@/lib/content/types'
 import { MDXContent } from '@/components/content/MDXContent'
 import { TableOfContents } from '@/components/content/TableOfContents'
+import { InlineMath } from '@/components/content/InlineMath'
 import { Badge } from '@/components/primitives/Badge'
 
 // ── Static generation ─────────────────────────────────────────────────────────
@@ -57,7 +58,7 @@ export default async function ConceptPage({ params }: Props) {
   return (
     <div className="min-h-full">
       {/* ── Page header ── */}
-      <div className="border-b border-border bg-surface px-8 py-7">
+      <div className="border-b border-border bg-surface px-4 py-5 md:px-8 md:py-7">
         {/* Breadcrumb */}
         <div className="mb-3 flex items-center gap-1.5 text-xs text-text-muted">
           <Link href="/topics" className="hover:text-text transition-colors">Topics</Link>
@@ -78,7 +79,7 @@ export default async function ConceptPage({ params }: Props) {
 
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="font-serif text-3xl text-text">{frontmatter.title}</h1>
+            <h1 className="font-serif text-2xl md:text-3xl text-text">{frontmatter.title}</h1>
             <p className="mt-2 max-w-2xl text-sm text-text-secondary leading-relaxed">
               {frontmatter.description}
             </p>
@@ -99,7 +100,7 @@ export default async function ConceptPage({ params }: Props) {
       <div className="flex gap-0">
 
         {/* Main content */}
-        <article className="min-w-0 flex-1 px-8 py-8">
+        <article className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">
 
           {/* Prerequisites */}
           {frontmatter.prerequisites.length > 0 && (
@@ -137,7 +138,7 @@ export default async function ConceptPage({ params }: Props) {
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     <span className="font-sans text-sm text-text-secondary leading-relaxed">
-                      {result}
+                      <InlineMath>{result}</InlineMath>
                     </span>
                   </li>
                 ))}

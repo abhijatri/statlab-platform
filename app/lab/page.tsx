@@ -16,7 +16,7 @@ export default function LabPage() {
         description="Four pillars of mathematical statistics. All computations are exact — adjust parameters and observe results update in real time."
       />
 
-      <div className="px-8 py-8 space-y-16">
+      <div className="px-4 py-6 md:px-8 md:py-8 space-y-16">
 
         {/* ── Estimation Theory ── */}
         <section>

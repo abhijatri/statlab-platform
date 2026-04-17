@@ -85,10 +85,10 @@ export default function HomePage() {
     <div className="min-h-full">
 
       {/* Hero */}
-      <section className="border-b border-border bg-surface px-8 py-16">
+      <section className="border-b border-border bg-surface px-4 py-10 md:px-8 md:py-16">
         <div className="max-w-2xl">
           <p className="label-xs mb-4">Research-grade interactive statistics</p>
-          <h1 className="font-serif text-5xl text-text leading-tight">
+          <h1 className="font-serif text-3xl md:text-5xl text-text leading-tight">
             Statistics as it<br />
             <em>should</em> be studied.
           </h1>
@@ -114,7 +114,7 @@ export default function HomePage() {
       </section>
 
       {/* Modules */}
-      <section className="px-8 py-10">
+      <section className="px-4 py-8 md:px-8 md:py-10">
         <p className="label-xs mb-5">Modules</p>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {MODULES.map(mod => (
@@ -148,7 +148,7 @@ export default function HomePage() {
       </section>
 
       {/* Topic previews */}
-      <section className="border-t border-border px-8 py-10">
+      <section className="border-t border-border px-4 py-8 md:px-8 md:py-10">
         <p className="label-xs mb-5">Topics</p>
         <div className="grid gap-3 sm:grid-cols-2">
           {TOPIC_PREVIEWS.map(topic => (

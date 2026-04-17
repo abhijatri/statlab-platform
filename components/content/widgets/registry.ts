@@ -95,6 +95,10 @@ const ConjugateAnalysis = dynamic(
   () => import('./ConjugateAnalysis').then(m => ({ default: m.ConjugateAnalysis })),
   { ssr: false })
 
+const LLNSimulator = dynamic(
+  () => import('./LLNSimulator').then(m => ({ default: m.LLNSimulator })),
+  { ssr: false })
+
 export const WIDGET_REGISTRY: Record<string, ComponentType> = {
   'eigendecomposition-explorer': EigendecompositionExplorer,
   'distribution-engine':         DistributionEngine,
@@ -117,4 +121,5 @@ export const WIDGET_REGISTRY: Record<string, ComponentType> = {
   'cramer-rao-explorer':         CramerRaoExplorer,
   'power-function':              PowerFunction,
   'conjugate-analysis':          ConjugateAnalysis,
+  'lln-convergence-demo':        LLNSimulator,
 }

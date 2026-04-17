@@ -12,11 +12,11 @@ description: >
   converge to the population mean — in probability and almost surely, respectively.
   The strong law requires only finite first moment; no finite variance is needed.
 keyResults:
-  - "WLLN: if E|X| < ∞, then X̄ₙ →_P E[X]"
-  - "SLLN (Kolmogorov): if E|X| < ∞, then X̄ₙ →_a.s. E[X]"
-  - "a.s. convergence implies convergence in probability (not vice versa)"
-  - "Chebyshev proof of WLLN requires Var(X) < ∞; char-fn proof needs only E|X| < ∞"
-  - "Rate: LIL gives lim sup √(n/2 log log n) |X̄ₙ - μ| = σ almost surely"
+  - "WLLN: if $E|X| < \\infty$, then $\\bar{X}_n \\xrightarrow{P} E[X]$"
+  - "SLLN (Kolmogorov): if $E|X| < \\infty$, then $\\bar{X}_n \\xrightarrow{\\text{a.s.}} E[X]$"
+  - "$\\bar{X}_n \\xrightarrow{\\text{a.s.}} \\mu$ implies $\\bar{X}_n \\xrightarrow{P} \\mu$ — the converse fails in general"
+  - "Chebyshev proof requires $\\operatorname{Var}(X) < \\infty$; char-fn proof needs only $E|X| < \\infty$"
+  - "Rate: LIL gives $\\limsup_{n\\to\\infty} \\frac{\\sqrt{n}\\,|\\bar{X}_n - \\mu|}{\\sigma\\sqrt{2\\log\\log n}} = 1$ a.s."
 relatedWidgets: [lln-convergence-demo]
 lastUpdated: "2026-04-16"
 ---

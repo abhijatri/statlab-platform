@@ -14,11 +14,11 @@ interface PageHeaderProps {
  */
 export function PageHeader({ title, description, eyebrow, actions, className }: PageHeaderProps) {
   return (
-    <div className={cn('border-b border-border bg-surface px-8 py-7', className)}>
+    <div className={cn('border-b border-border bg-surface px-4 py-5 md:px-8 md:py-7', className)}>
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           {eyebrow && <p className="label-xs mb-2">{eyebrow}</p>}
-          <h1 className="font-serif text-3xl text-text">{title}</h1>
+          <h1 className="font-serif text-2xl md:text-3xl text-text">{title}</h1>
           {description && (
             <p className="mt-2 max-w-2xl text-sm text-text-secondary leading-relaxed">
               {description}
