@@ -1,0 +1,88 @@
+---
+title: Linear Transformation Visualizer
+slug: linear-transform
+topic: Linear Algebra
+subtopic: Linear Maps
+difficulty: 2
+tags: [linear-algebra, matrices, transformations, eigenvalues, determinant]
+prerequisites: [vectors, matrix-multiplication]
+leadsTo: [eigendecomposition, singular-value-decomposition, pca]
+description: >
+  Every 2×2 matrix defines a linear map on ℝ². This visualizer lets you feel how the
+  four matrix entries control stretching, rotation, shearing, and reflection — and how
+  the determinant measures area scaling while eigenvalues reveal the map's intrinsic axes.
+keyResults:
+  - "det(A) = signed area scaling factor; det < 0 ⟺ orientation reversal"
+  - "Eigenvalues are the scaling factors along eigenvector directions"
+  - "Complex eigenvalues ⟺ the map has a rotation component (no real fixed direction)"
+  - "rank(A) < 2 ⟺ det = 0 — the plane collapses to a line or point"
+relatedWidgets: [linear-transform-viz]
+lastUpdated: "2026-04-17"
+---
+
+## Matrices as Geometric Maps
+
+A $2\times 2$ matrix $A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$ acts on every vector
+$\mathbf{x} \in \mathbb{R}^2$ by matrix multiplication:
+
+$$
+A\mathbf{x} = \begin{pmatrix} a & b \\ c & d \end{pmatrix}\begin{pmatrix} x_1 \\ x_2 \end{pmatrix}
+= \begin{pmatrix} ax_1 + bx_2 \\ cx_1 + dx_2 \end{pmatrix}
+$$
+
+The entire geometry of the map is encoded in the four numbers $a, b, c, d$.
+
+<Intuition>
+Instead of thinking about vectors one at a time, think about what happens to the whole plane.
+The unit circle becomes an ellipse (possibly degenerate). The unit square becomes a parallelogram.
+The two column vectors $\mathbf{e}_1 = (1,0)^T$ and $\mathbf{e}_2 = (0,1)^T$ tell you exactly where
+every point lands: column 1 shows where $(1,0)$ goes, column 2 shows where $(0,1)$ goes.
+</Intuition>
+
+<Widget id="linear-transform-viz" />
+
+## Key Quantities
+
+### Determinant — area and orientation
+
+$$
+\det(A) = ad - bc
+$$
+
+- $|\det A|$ = ratio of output area to input area
+- $\det A > 0$: orientation preserved
+- $\det A < 0$: orientation reversed (left ↔ right flipped)
+- $\det A = 0$: rank-deficient — the plane collapses to a line or point
+
+Try the *Reflect x* preset: $\det = -1$ and the ellipse looks the same size but the unit square
+is mirrored.
+
+### Eigenvalues — intrinsic scaling directions
+
+The characteristic equation $\det(A - \lambda I) = 0$ gives:
+
+$$
+\lambda^2 - \operatorname{tr}(A)\,\lambda + \det(A) = 0
+\quad\Longrightarrow\quad
+\lambda = \frac{\operatorname{tr}(A) \pm \sqrt{\operatorname{tr}(A)^2 - 4\det(A)}}{2}
+$$
+
+- **Real eigenvalues** ($\operatorname{tr}^2 \ge 4\det$): two directions that are merely scaled (not rotated).
+- **Complex eigenvalues** ($\operatorname{tr}^2 < 4\det$): no real fixed direction — the map has an irreducible rotation component.
+- $\lambda_1 + \lambda_2 = \operatorname{tr}(A)$, $\quad\lambda_1\lambda_2 = \det(A)$ — always.
+
+### Preset gallery
+
+| Preset | Effect | $\det$ | Eigenvalues |
+|--------|--------|--------|-------------|
+| Identity | No change | 1 | 1, 1 |
+| Rotation 90° | Pure rotation | 1 | $\pm i$ |
+| H-Shear | Tilts columns | 1 | 1, 1 |
+| Squeeze | Stretches one axis | 1 | 2, 0.5 |
+| Projection | Collapses y | 0 | 1, 0 |
+
+## Connection to the SVD
+
+Every matrix $A$ admits a singular value decomposition $A = U\Sigma V^T$ where $\Sigma$ contains
+the **singular values** (semi-axes of the output ellipse). Eigenvalues are the special case where
+$U = V$ (i.e., $A$ is symmetric). The visualizer shows the full general case.

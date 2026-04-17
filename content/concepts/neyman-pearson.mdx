@@ -1,0 +1,70 @@
+---
+title: Neyman-Pearson Lemma
+slug: neyman-pearson
+topic: Hypothesis Testing
+difficulty: 4
+tags: [neyman-pearson, most-powerful-test, likelihood-ratio, power, alpha]
+prerequisites: [mle, distributions]
+leadsTo: [ump-tests, likelihood-ratio, power-analysis]
+description: The Neyman-Pearson lemma proves that the likelihood ratio test is the most powerful test for any fixed significance level when testing a simple null against a simple alternative.
+keyResults:
+  - "Reject H₀ iff Λ(x) = f(x;θ₁)/f(x;θ₀) > k, where k chosen so P(Λ>k|H₀)=α"
+  - "Any size-α test with power > the LR test is impossible (Neyman-Pearson)"
+  - "Power = P(Λ>k|θ₁) = 1 − β (β = type-II error probability)"
+  - "Critical region is the most 'efficient' use of the rejection budget α"
+---
+
+# Neyman-Pearson Lemma
+
+Consider testing a simple null against a simple alternative:
+
+$$H_0: \theta = \theta_0 \quad \text{vs} \quad H_1: \theta = \theta_1$$
+
+The **Neyman-Pearson Lemma** states that the **likelihood ratio test** is the **most powerful test** of size $\alpha$.
+
+## The likelihood ratio test
+
+Reject $H_0$ if:
+
+$$\Lambda(\mathbf{x}) = \frac{f(\mathbf{x};\theta_1)}{f(\mathbf{x};\theta_0)} > k$$
+
+where $k$ is chosen so that $P(\Lambda(\mathbf{X}) > k \mid H_0) = \alpha$.
+
+<Widget id="power-function" />
+
+## The Lemma (formal statement)
+
+Let $\phi^*$ be the likelihood ratio test with $E_{\theta_0}[\phi^*] = \alpha$. For **any other test** $\phi$ with $E_{\theta_0}[\phi] \leq \alpha$:
+
+$$E_{\theta_1}[\phi^*] \geq E_{\theta_1}[\phi]$$
+
+That is, the likelihood ratio test has the **highest power** among all size-$\alpha$ tests.
+
+## Proof sketch
+
+The proof is elegant. Let $A^* = \{\Lambda > k\}$ be the rejection region. For any other region $A$ with $P(A \mid H_0) \leq P(A^* \mid H_0) = \alpha$:
+
+$$P(A^*|H_1) - P(A|H_1) = \int (1_{A^*} - 1_A)(f_1 - kf_0)\,d\mu \geq 0$$
+
+This follows because $1_{A^*} - 1_A \geq 0$ exactly where $f_1/f_0 > k$, and $\leq 0$ where $f_1/f_0 \leq k$.
+
+## Types of errors
+
+| Decision | $H_0$ true | $H_1$ true |
+|---|---|---|
+| Reject $H_0$ | **Type I error** (prob $\alpha$) | Correct (power $= 1-\beta$) |
+| Accept $H_0$ | Correct | **Type II error** (prob $\beta$) |
+
+There is always a tradeoff: reducing $\alpha$ increases $\beta$.
+
+## Example: Normal means
+
+$X_1,\ldots,X_n \sim N(\mu,1)$, test $\mu=0$ vs $\mu=1$.
+
+$$\log\Lambda = \sum_{i=1}^n \left[\log f(x_i;1) - \log f(x_i;0)\right] = \sum x_i - \frac{n}{2}$$
+
+Reject iff $\bar{X} > z_\alpha/\sqrt{n}$. This is the standard z-test.
+
+## Historical note
+
+Jerzy Neyman and Egon Pearson published the lemma in 1933 in the Philosophical Transactions of the Royal Society. Their framework shifted statistics from Fisher's fiducial approach (which generated estimates) to a decision-theoretic framework with controlled error rates. The famous Fisher-Neyman-Pearson controversy over the meaning of hypothesis tests persists in modern statistics.

@@ -1,0 +1,75 @@
+---
+title: CLT & Variants
+slug: clt-variants
+topic: Asymptotic Theory
+difficulty: 3
+tags: [clt, central-limit-theorem, convergence, lindeberg, lyapunov]
+prerequisites: [distributions, law-of-large-numbers]
+leadsTo: [berry-esseen, delta-method, lan]
+description: The Central Limit Theorem and its extensions — Lindeberg, Lyapunov, multivariate — establish when sums of random variables converge to normality and at what rate.
+keyResults:
+  - "Classical CLT: √n(X̄−μ)/σ →d N(0,1) for iid finite-variance variables"
+  - "Lindeberg CLT: negligibility condition replaces iid, allows varying distributions"
+  - "Lyapunov: Σ E|Xᵢ|^{2+δ} / (Σ σᵢ²)^{(2+δ)/2} → 0 implies normality"
+  - "Multivariate: √n(X̄−μ) →d N(0,Σ) where Σ is the population covariance"
+---
+
+# Central Limit Theorem and Variants
+
+## Classical CLT
+
+Let $X_1, X_2, \ldots$ be iid with $E[X_i] = \mu$ and $\text{Var}(X_i) = \sigma^2 < \infty$. Then:
+
+$$\sqrt{n}\!\left(\bar{X}_n - \mu\right) \xrightarrow{d} N(0, \sigma^2)$$
+
+Equivalently, $Z_n = \sqrt{n}(\bar{X}_n - \mu)/\sigma \to N(0,1)$ in distribution.
+
+The key requirements: **finite variance** and **identical distribution**. Both can be relaxed.
+
+<Widget id="clt-simulator" />
+
+## What the CLT says (and doesn't say)
+
+The CLT says the *distribution* of $\bar{X}_n$ approaches normal — it does NOT say individual $X_i$ are normal, that $\bar X_n$ equals a normal variable, or that convergence is uniform across all possible distributions.
+
+## Lindeberg CLT (Non-identically distributed)
+
+Let $X_1, \ldots, X_n$ be independent (but not necessarily identically distributed) with $E[X_i] = \mu_i$, $\text{Var}(X_i) = \sigma_i^2$, and $s_n^2 = \sum_{i=1}^n \sigma_i^2$.
+
+**Lindeberg condition**: for every $\epsilon > 0$,
+
+$$\frac{1}{s_n^2} \sum_{i=1}^n E\!\left[(X_i - \mu_i)^2 \mathbf{1}_{|X_i - \mu_i| > \epsilon s_n}\right] \to 0$$
+
+This says no single summand dominates. Under this condition:
+
+$$\frac{\sum_{i=1}^n (X_i - \mu_i)}{s_n} \xrightarrow{d} N(0,1)$$
+
+## Lyapunov CLT
+
+The **Lyapunov condition** is sufficient for Lindeberg: if for some $\delta > 0$,
+
+$$\frac{\sum_{i=1}^n E[|X_i - \mu_i|^{2+\delta}]}{s_n^{2+\delta}} \to 0$$
+
+then the CLT holds. This is often easier to verify.
+
+## Multivariate CLT
+
+For iid random vectors $\mathbf{X}_i \in \mathbb{R}^k$ with mean $\boldsymbol\mu$ and covariance matrix $\Sigma$:
+
+$$\sqrt{n}(\bar{\mathbf{X}}_n - \boldsymbol\mu) \xrightarrow{d} N_k(\mathbf{0}, \Sigma)$$
+
+Proof: apply the univariate CLT to $\mathbf{a}^\top \mathbf{X}_i$ for any $\mathbf{a}$, then use the Cramér-Wold device.
+
+## Rate of convergence
+
+The CLT gives convergence without quantifying the error. The Berry-Esseen theorem provides the rate: the Kolmogorov distance between $Z_n$ and $N(0,1)$ is $O(1/\sqrt{n})$ — see the Berry-Esseen concept for details.
+
+## When CLT fails
+
+1. **Infinite variance** (e.g., Cauchy distribution): $\bar X_n$ does not converge to normal; it stays Cauchy.
+2. **Heavy dependence**: positively correlated sums may converge to a different limit.
+3. **Long-range dependence**: fractional Brownian motion rather than Brownian motion.
+
+## Historical note
+
+The first version was proved by Abraham de Moivre (1733) for Bernoulli random variables. Pierre-Simon Laplace generalized it (1812). The modern proof using characteristic functions is due to Lindeberg (1920) and Lévy (1925).

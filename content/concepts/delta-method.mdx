@@ -1,0 +1,77 @@
+---
+title: Delta Method
+slug: delta-method
+topic: Asymptotic Theory
+difficulty: 3
+tags: [delta-method, transformation, variance-stabilization, taylor, asymptotic-normality]
+prerequisites: [clt-variants, mle]
+leadsTo: [lan, berry-esseen]
+description: The delta method propagates asymptotic normality through smooth transformations, giving the asymptotic distribution of g(X̄) in terms of the derivative g'(μ).
+keyResults:
+  - "√n(g(X̄)−g(μ)) →d N(0, [g'(μ)]²σ²)"
+  - "Multivariate: √n(g(X̄)−g(μ)) →d N(0, ∇g(μ)ᵀΣ∇g(μ))"
+  - "Variance stabilization: choose g so [g'(μ)]²σ²(μ) is constant"
+  - "Second-order: if g'(μ)=0, use n(g(X̄)−g(μ)) →d [g''(μ)/2]σ²χ²(1)"
+---
+
+# The Delta Method
+
+If $\sqrt{n}(\bar X_n - \mu) \xrightarrow{d} N(0,\sigma^2)$ and $g$ is differentiable at $\mu$ with $g'(\mu) \neq 0$, then:
+
+$$\sqrt{n}(g(\bar X_n) - g(\mu)) \xrightarrow{d} N(0, [g'(\mu)]^2\sigma^2)$$
+
+## Proof sketch
+
+By Taylor expansion around $\mu$:
+
+$$g(\bar X_n) \approx g(\mu) + g'(\mu)(\bar X_n - \mu) + O((\bar X_n - \mu)^2)$$
+
+Multiplying by $\sqrt{n}$ and using Slutsky's theorem:
+
+$$\sqrt{n}(g(\bar X_n) - g(\mu)) \approx g'(\mu) \cdot \sqrt{n}(\bar X_n - \mu) \xrightarrow{d} g'(\mu) \cdot N(0,\sigma^2)$$
+
+<Widget id="clt-simulator" />
+
+## Examples
+
+**Log transformation** ($g(x) = \log x$, $\mu > 0$):
+
+$$\sqrt{n}(\log\bar X_n - \log\mu) \xrightarrow{d} N\!\left(0, \frac{\sigma^2}{\mu^2}\right)$$
+
+**Square root** ($g(x) = \sqrt{x}$):
+
+$$\sqrt{n}(\sqrt{\bar X_n} - \sqrt\mu) \xrightarrow{d} N\!\left(0, \frac{\sigma^2}{4\mu}\right)$$
+
+**MLE transformation**: if $\hat\theta \sim N(\theta, I(\theta)^{-1}/n)$ asymptotically, then:
+
+$$\sqrt{n}(g(\hat\theta) - g(\theta)) \xrightarrow{d} N\!\left(0, \frac{[g'(\theta)]^2}{I(\theta)}\right)$$
+
+## Variance-stabilizing transformations
+
+Suppose $\text{Var}(X) = \sigma^2(\mu)$ depends on the mean. Choose $g$ so the asymptotic variance $[g'(\mu)]^2 \sigma^2(\mu) = c$ (constant).
+
+This gives $g'(\mu) \propto 1/\sigma(\mu)$, so $g(\mu) = \int \frac{d\mu}{\sigma(\mu)}$.
+
+| Distribution | $\sigma^2(\mu)$ | Stabilizing $g$ |
+|---|---|---|
+| Binomial proportion | $p(1-p)$ | $\arcsin(\sqrt{p})$ |
+| Poisson | $\lambda$ | $\sqrt{\lambda}$ |
+| Exponential | $1/\lambda^2$ | $\log \lambda$ |
+
+After applying $g$, standard errors and confidence intervals are simpler.
+
+## Multivariate delta method
+
+For $\sqrt{n}(\bar{\mathbf{X}}_n - \boldsymbol\mu) \xrightarrow{d} N_k(\mathbf{0}, \Sigma)$ and $g: \mathbb{R}^k \to \mathbb{R}^m$ differentiable:
+
+$$\sqrt{n}(g(\bar{\mathbf{X}}_n) - g(\boldsymbol\mu)) \xrightarrow{d} N_m\!\left(\mathbf{0}, J g(\boldsymbol\mu) \Sigma J g(\boldsymbol\mu)^\top\right)$$
+
+where $Jg$ is the $m \times k$ Jacobian matrix of $g$.
+
+## Second-order delta method
+
+When $g'(\mu) = 0$, the first-order method gives a degenerate limit. The second-order:
+
+$$n(g(\bar X_n) - g(\mu)) \xrightarrow{d} \frac{g''(\mu)\sigma^2}{2} \chi^2(1)$$
+
+This arises, for example, when testing whether a parameter lies on the boundary of its parameter space.

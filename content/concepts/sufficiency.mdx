@@ -1,0 +1,74 @@
+---
+title: Sufficiency & UMVUE
+slug: sufficiency
+topic: Estimation Theory
+difficulty: 4
+tags: [sufficiency, rao-blackwell, umvue, completeness, ancillarity]
+prerequisites: [fisher-information, cramer-rao-bound]
+leadsTo: [mle, exponential-family]
+description: A sufficient statistic captures all information in the data about the parameter. The Rao-Blackwell theorem shows how to improve any estimator by conditioning on a sufficient statistic.
+keyResults:
+  - "T is sufficient iff f(x;θ) = g(T(x),θ)·h(x) — Fisher-Neyman factorization"
+  - "Rao-Blackwell: Var(E[W|T]) ≤ Var(W) for any unbiased W"
+  - "Complete sufficient T + unbiasedness → unique UMVUE (Lehmann-Scheffé)"
+  - "Exponential families have complete sufficient statistics: T(x) = Σ t(xᵢ)"
+---
+
+# Sufficiency & UMVUE
+
+A statistic $T(X)$ is **sufficient** for $\theta$ if the conditional distribution of $X$ given $T(X)$ does not depend on $\theta$. Intuitively: once you know $T$, the raw data add no information about $\theta$.
+
+## Fisher-Neyman Factorization Theorem
+
+$T(X)$ is sufficient for $\theta$ if and only if the joint density factors as:
+
+$$f(\mathbf{x};\theta) = g(T(\mathbf{x}),\theta) \cdot h(\mathbf{x})$$
+
+where $g$ depends on $\mathbf{x}$ only through $T$, and $h$ does not depend on $\theta$.
+
+**Example.** For $X_1,\ldots,X_n \sim N(\mu,\sigma^2)$ (σ² known):
+
+$$f(\mathbf{x};\mu) \propto \exp\!\left(-\frac{1}{2\sigma^2}\sum(x_i-\mu)^2\right) = \exp\!\left(-\frac{n(\bar x-\mu)^2}{2\sigma^2}\right)\exp\!\left(-\frac{\sum(x_i-\bar x)^2}{2\sigma^2}\right)$$
+
+so $T = \bar{X}$ is sufficient for $\mu$.
+
+## Rao-Blackwell Theorem
+
+Let $W$ be any unbiased estimator of $\theta$, and let $T$ be sufficient for $\theta$. Define:
+
+$$W^* = E[W \mid T]$$
+
+Then:
+1. $E[W^*] = \theta$ — still unbiased
+2. $\text{Var}(W^*) \leq \text{Var}(W)$ for all $\theta$ — always at least as good
+3. Strict inequality if $W$ is not already a function of $T$
+
+The Rao-Blackwell theorem says: **never use an estimator that ignores a sufficient statistic**.
+
+## Complete Sufficient Statistics
+
+$T$ is **complete** if $E_\theta[g(T)] = 0$ for all $\theta$ implies $g(T) = 0$ a.s. for all $\theta$.
+
+This is a minimality condition: a complete sufficient statistic contains exactly the right information, with no extra structure that could cancel out.
+
+## Lehmann-Scheffé Theorem
+
+If $T$ is a **complete sufficient** statistic and $W = h(T)$ is any function of $T$ that is unbiased for $\theta$, then $W$ is the **unique** UMVUE (Uniformly Minimum Variance Unbiased Estimator).
+
+Combined pipeline: find complete sufficient $T$ → find $h(T)$ unbiased → done.
+
+## Exponential Families
+
+One-parameter exponential families have density:
+
+$$f(x;\theta) = h(x) \cdot \exp(\eta(\theta)T(x) - A(\theta))$$
+
+Here $\sum_{i=1}^n T(X_i)$ is a **complete sufficient** statistic, and the Lehmann-Scheffé theorem applies directly. This is why exponential families are so tractable.
+
+## Ancillarity
+
+The complement of sufficiency: $A$ is **ancillary** if its distribution does not depend on $\theta$ at all. Fisher argued that conditional inference should condition on ancillary statistics (Fisher's conditionality principle), though this leads to difficult conceptual issues (Basu's theorem).
+
+## Historical note
+
+Sufficiency was introduced by R.A. Fisher in 1920. The Rao-Blackwell theorem was proved independently by C.R. Rao (1945) and D. Blackwell (1947). Lehmann and Scheffé proved the uniqueness result in 1950.

@@ -1,0 +1,74 @@
+---
+title: Distribution Engine
+slug: distributions
+topic: Probability Theory
+subtopic: Distribution Theory
+difficulty: 2
+tags: [distributions, probability, statistical-computing, visualization]
+prerequisites: [probability-space]
+leadsTo: [law-of-large-numbers, eigendecomposition, lebesgue-integration]
+description: >
+  An interactive lab for exploring 18 probability distributions across Classical,
+  Heavy-tail, Extreme Value, Multivariate, and Advanced families — with live PDF/CDF plots,
+  sampling engine, tail-risk explorer, and distribution comparison tools.
+keyResults:
+  - "18 distributions: Normal, Cauchy, Student-t, Beta, Gamma, Pareto, GEV, GPD, Lévy, Weibull, and more"
+  - "Sampling engine with histogram vs. theoretical overlay (up to n=10,000)"
+  - "Log-scale tail explorer with VaR at 90%, 95%, 99%, 99.9%"
+  - "Real-time moment computation: mean, variance, skewness, excess kurtosis"
+  - "Side-by-side comparison of any two distributions with moment tables"
+relatedWidgets: [distribution-engine]
+lastUpdated: "2026-04-17"
+---
+
+## Interactive Distribution Lab
+
+<Intuition>
+Every statistical model rests on a choice of distribution. This lab lets you
+develop intuition for how distribution families differ in their shape, tail behaviour,
+and parameterisation — the foundation for choosing models in practice.
+
+Explore **18 distributions** across five families. Adjust parameters in real-time,
+generate samples, compare tail heaviness on a log scale, and inspect exact moments.
+</Intuition>
+
+## How to Use
+
+- **Left panel** — select a distribution family, then a specific distribution, then drag the parameter sliders.
+- **Density tab** — side-by-side PDF and CDF plots, updated live.
+- **Sampling tab** — generate up to 10,000 samples; histogram is overlaid with the theoretical PDF.
+- **Tails tab** — log-scale PDF reveals whether the tail decays exponentially (straight line) or as a power law (concave); right-tail quantiles are marked.
+- **Moments tab** — exact mean, variance, skewness, excess kurtosis, entropy. Undefined moments (e.g. Cauchy) display as —.
+- **Compare tab** — overlay two distributions; adjust both sets of parameters independently.
+
+## Widget
+
+<Widget id="distribution-engine" title="Distribution Engine" height={520} />
+
+## Distribution Families
+
+### Classical
+
+The workhorses of probability: Normal, Gamma, Beta, Chi-Squared, Exponential, Uniform. These arise naturally via the Central Limit Theorem, conjugacy, and order-statistic theory.
+
+### Heavy-tail
+
+Cauchy, Student-t, Pareto, Lévy, and Log-Normal. A distribution is heavy-tailed if $P(X > x) \sim x^{-\alpha}$ (power law). For Cauchy, **all moments diverge** — there is no mean.
+
+### Extreme Value
+
+<Definition number={1} name="Generalised Extreme Value (GEV)">
+The GEV unifies three extreme-value limit distributions:
+$$F(x;\mu,\sigma,\xi) = \exp\!\left(-\!\left(1 + \xi\frac{x-\mu}{\sigma}\right)^{\!-1/\xi}\right).$$
+- $\xi = 0$: **Gumbel** (exponential tail)
+- $\xi > 0$: **Fréchet** (heavy power-law tail, used for financial extremes)
+- $\xi < 0$: **Weibull-type** (bounded right tail)
+</Definition>
+
+The **GPD** (Generalised Pareto) governs the distribution of threshold exceedances — the basis of Extreme Value Theory in risk management.
+
+### Advanced
+
+Weibull, Laplace, Skew-Normal, Beta-Prime. The **Skew-Normal** $\text{SN}(\xi, \omega, \alpha)$ adds asymmetry to the Gaussian:
+$$f(x) = \frac{2}{\omega}\,\phi\!\left(\frac{x-\xi}{\omega}\right)\Phi\!\left(\alpha\cdot\frac{x-\xi}{\omega}\right)$$
+where $\alpha = 0$ recovers $\mathcal{N}(\xi, \omega^2)$.

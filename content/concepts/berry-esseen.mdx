@@ -1,0 +1,64 @@
+---
+title: Berry-Esseen Theorem
+slug: berry-esseen
+topic: Asymptotic Theory
+difficulty: 4
+tags: [berry-esseen, convergence-rate, kolmogorov, normal-approximation, bound]
+prerequisites: [clt-variants, distributions]
+leadsTo: [delta-method, lan]
+description: The Berry-Esseen theorem gives an explicit bound on the error in the CLT normal approximation, showing it decays at rate O(1/√n) with a universal constant.
+keyResults:
+  - "sup_x |P(Z_n ≤ x) − Φ(x)| ≤ C·ρ/(σ³·√n), where ρ = E|X−μ|³"
+  - "Best known constant C ≤ 0.4748 (Shevtsova 2010)"
+  - "Rate is sharp: O(1/√n) cannot in general be improved"
+  - "Multivariate Berry-Esseen: O(k^{1/4}/√n) uniform over convex sets"
+---
+
+# Berry-Esseen Theorem
+
+The Central Limit Theorem guarantees convergence in distribution but says nothing about *how fast*. The Berry-Esseen theorem gives an explicit, quantitative bound.
+
+## The bound
+
+Let $X_1,\ldots,X_n$ be iid with mean $\mu$, variance $\sigma^2 > 0$, and finite third absolute moment $\rho = E[|X_i - \mu|^3] < \infty$. Then:
+
+$$\sup_{x \in \mathbb{R}} \left| P\!\left(\frac{\sqrt{n}(\bar X_n - \mu)}{\sigma} \leq x\right) - \Phi(x) \right| \leq \frac{C \rho}{\sigma^3 \sqrt{n}}$$
+
+where $C$ is a universal constant. The best known value is $C \leq 0.4748$ (Shevtsova, 2010).
+
+## Interpretation
+
+The Kolmogorov distance between $Z_n = \sqrt{n}(\bar X - \mu)/\sigma$ and the standard normal decays as $O(1/\sqrt{n})$. The constant $C\rho/\sigma^3$ measures **skewness**:
+
+- Symmetric distributions ($\rho$ small relative to $\sigma^3$): faster convergence
+- Skewed distributions (e.g., exponential): slower convergence, larger constant
+
+## Sharpness
+
+The $O(1/\sqrt{n})$ rate is **optimal**: one cannot get $O(1/n)$ in general. For the Bernoulli distribution with $p = 1/2$:
+
+$$\sup_x |P(Z_n \leq x) - \Phi(x)| \sim \frac{1}{\sqrt{2\pi n}}$$
+
+which confirms the bound is tight.
+
+## Practical implications
+
+For $n = 100$ and a moderately skewed distribution with $C\rho/\sigma^3 \approx 1$, the error is at most $0.05$ — so the normal approximation has up to 5% error in tail probabilities. At $n = 1000$, this drops to ~1.5%.
+
+This is why bootstrap methods (which do not rely on normal approximation) are preferred for small samples or skewed populations.
+
+## Multivariate Berry-Esseen
+
+For $\mathbf{X}_i \in \mathbb{R}^k$ with covariance $\Sigma$, the uniform bound over convex sets $A$:
+
+$$\sup_A \left|P(\sqrt{n}\bar{\mathbf{X}} \in A) - P(\mathbf{Z} \in A)\right| \leq \frac{C \cdot k^{1/4}}{\sqrt{n}} \cdot \frac{\rho_3}{\lambda_{\min}(\Sigma)^{3/2}}$$
+
+where $\lambda_{\min}$ is the smallest eigenvalue of $\Sigma$. The dimension $k$ enters only through $k^{1/4}$, making the bound useful in moderate dimensions.
+
+## Non-uniform bounds
+
+The Berry-Esseen theorem gives a *uniform* bound over all $x$. For fixed $x$ far in the tail, the actual error can be much smaller — this is the content of the **Petrov bound** and Cramér's large deviation result.
+
+## Historical note
+
+Andrew Berry (1941) and Carl-Gustav Esseen (1942) proved this independently during World War II. Esseen obtained the $C = 7.59$ constant; the constant has been progressively improved over eight decades to the current $0.4748$.

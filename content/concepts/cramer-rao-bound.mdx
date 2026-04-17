@@ -1,0 +1,80 @@
+---
+title: Cramér-Rao Lower Bound
+slug: cramer-rao-bound
+topic: Estimation Theory
+difficulty: 3
+tags: [cramér-rao, lower-bound, efficiency, fisher-information, umvue]
+prerequisites: [fisher-information, distributions]
+leadsTo: [sufficiency, mle]
+description: The Cramér-Rao bound establishes that no unbiased estimator can have variance below 1/(nI(θ)), making it the gold standard for evaluating estimator efficiency.
+keyResults:
+  - "Var(T) ≥ [1 + b'(θ)]² / I_n(θ) for any estimator with bias b(θ)"
+  - "Unbiased case: Var(T) ≥ 1/(n·I(θ))"
+  - "MLE achieves the bound asymptotically: √n(θ̂−θ) →d N(0, 1/I(θ))"
+  - "Efficiency e(T) = CRLB/Var(T) ∈ (0,1]; e=1 iff T is UMVUE"
+---
+
+# Cramér-Rao Lower Bound
+
+The Cramér-Rao Lower Bound (CRLB) gives the minimum possible variance for any unbiased estimator of a parameter, in terms of Fisher information.
+
+## The bound
+
+Let $T(X_1,\ldots,X_n)$ be any estimator of $\theta$ with bias $b(\theta) = E_\theta[T] - \theta$, assuming regularity conditions hold. Then:
+
+$$\text{Var}_\theta(T) \geq \frac{[1 + b'(\theta)]^2}{I_n(\theta)}$$
+
+For an **unbiased** estimator ($b(\theta) = 0$):
+
+$$\text{Var}_\theta(T) \geq \frac{1}{n \cdot I(\theta)}$$
+
+<Widget id="cramer-rao-explorer" />
+
+## Proof sketch
+
+The proof uses the Cauchy-Schwarz inequality. For any unbiased $T$:
+
+$$\text{Cov}(T, s(X;\theta)) = \frac{\partial}{\partial\theta} E[T] = 1$$
+
+By Cauchy-Schwarz: $\text{Cov}(T,s)^2 \leq \text{Var}(T) \cdot \text{Var}(s) = \text{Var}(T) \cdot I_n(\theta)$
+
+Therefore $1 \leq \text{Var}(T) \cdot I_n(\theta)$, which gives the result.
+
+## When is the bound achieved?
+
+The bound is achieved (an estimator is **efficient**) if and only if the score can be written as a linear function of $T$:
+
+$$s(X;\theta) = \frac{\partial}{\partial\theta}\log f(X;\theta) = c(\theta)(T(X) - \theta)$$
+
+This precisely characterizes the **exponential family**, which is why exponential families admit efficient estimators.
+
+## Examples of efficient estimators
+
+| Distribution | Parameter | UMVUE/MLE | Variance | CRLB |
+|---|---|---|---|---|
+| Normal ($\sigma^2$ known) | $\mu$ | $\bar{X}$ | $\sigma^2/n$ | $\sigma^2/n$ ✓ |
+| Exponential($\lambda$) | $\lambda$ | $n/\sum X_i$ | $\lambda^2/n$ | $\lambda^2/n$ ✓ |
+| Poisson($\lambda$) | $\lambda$ | $\bar{X}$ | $\lambda/n$ | $\lambda/n$ ✓ |
+| Bernoulli($p$) | $p$ | $\bar{X}$ | $p(1-p)/n$ | $p(1-p)/n$ ✓ |
+
+## Efficiency
+
+The **efficiency** of an estimator $T$ is:
+
+$$e(T,\theta) = \frac{\text{CRLB}}{\text{Var}_\theta(T)} \in (0,1]$$
+
+An estimator with $e = 1$ is called **fully efficient**. An estimator achieving $e < 1$ for all $\theta$ can always be improved by the Rao-Blackwell theorem.
+
+## Asymptotic efficiency of MLE
+
+Although many MLEs are biased for finite $n$, the MLE is asymptotically efficient:
+
+$$\sqrt{n}(\hat\theta_{MLE} - \theta) \xrightarrow{d} N\!\left(0, \frac{1}{I(\theta)}\right)$$
+
+No consistent estimator sequence can have a smaller asymptotic variance — this is the **Cramér-Rao efficiency bound** in the asymptotic sense.
+
+## Common misconception
+
+> "The CRLB doesn't apply to biased estimators."
+
+False. The bound applies to *any* estimator, biased or unbiased — the correct form includes the derivative of the bias. A biased estimator can have variance below the *unbiased* CRLB.

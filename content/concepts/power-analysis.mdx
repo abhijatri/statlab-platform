@@ -1,0 +1,79 @@
+---
+title: Power Analysis
+slug: power-analysis
+topic: Hypothesis Testing
+difficulty: 3
+tags: [power, sample-size, effect-size, type-ii-error, cohen]
+prerequisites: [neyman-pearson, ump-tests]
+leadsTo: [likelihood-ratio, lan]
+description: Power analysis determines the probability of detecting a true effect, and drives sample size calculation. The power function β(θ) tracks how rejection probability varies with the parameter.
+keyResults:
+  - "Power = P(reject H₀|H₁ true) = 1 − β (β = type-II error probability)"
+  - "z-test power: Φ(z_α − δ√n/σ) for one-sided, where δ = μ₁−μ₀ is effect"
+  - "Sample size: n = (z_α + z_β)²σ²/δ² for one-sided test"
+  - "Effect size d = δ/σ; Cohen's benchmarks: small 0.2, medium 0.5, large 0.8"
+---
+
+# Power Analysis
+
+The **power function** of a test $\phi$ is:
+
+$$\beta(\theta) = E_\theta[\phi(\mathbf{X})] = P_\theta(\text{reject } H_0)$$
+
+A good test has:
+- $\beta(\theta) \leq \alpha$ for $\theta \in \Theta_0$ (size control)
+- $\beta(\theta)$ close to 1 for $\theta \in \Theta_1$ far from $\Theta_0$ (high power)
+
+<Widget id="power-function" />
+
+## Power of the one-sided z-test
+
+For $X_1,\ldots,X_n \sim N(\mu, \sigma^2)$ ($\sigma^2$ known), testing $H_0: \mu = \mu_0$ vs $H_1: \mu > \mu_0$.
+
+Reject iff $Z = \sqrt{n}(\bar X - \mu_0)/\sigma > z_\alpha$.
+
+Power at true mean $\mu_1 > \mu_0$:
+
+$$\beta(\mu_1) = P\!\left(Z > z_\alpha \;\middle|\; \mu = \mu_1\right) = \Phi\!\left(-z_\alpha + \frac{\sqrt{n}(\mu_1 - \mu_0)}{\sigma}\right)$$
+
+## Sample size formula
+
+To achieve power $1-\beta_0$ at $\mu_1$ with size $\alpha$:
+
+$$n = \left\lceil \frac{(z_\alpha + z_{\beta_0})^2 \sigma^2}{(\mu_1 - \mu_0)^2} \right\rceil$$
+
+**Example**: $\alpha = 0.05$, power $= 0.80$, $\sigma = 1$, detect effect $\delta = 0.5$:
+
+$n = (1.645 + 0.842)^2 / 0.25 \approx 25$ per group.
+
+## Effect size
+
+Cohen's standardized effect size $d = (\mu_1 - \mu_0)/\sigma$ removes the role of scale:
+
+| Cohen's $d$ | Interpretation |
+|---|---|
+| 0.2 | Small |
+| 0.5 | Medium |
+| 0.8 | Large |
+
+The required sample size scales as $1/d^2$ — halving the effect size quadruples the required $n$.
+
+## Power for t-test (unknown σ)
+
+The power uses the **non-central t-distribution**: under $H_1: \mu = \mu_1$,
+
+$$T_{n-1} = \frac{\sqrt{n}(\bar X - \mu_0)}{S} \sim t_{n-1, \lambda}$$
+
+where the non-centrality parameter is $\lambda = \sqrt{n}(\mu_1 - \mu_0)/\sigma$.
+
+## Two-sided power
+
+For $H_0: \mu = 0$ vs $H_1: \mu \neq 0$, power is:
+
+$$\beta(\mu_1) = \Phi\!\left(-z_{\alpha/2} + \frac{\sqrt{n}|\mu_1|}{\sigma}\right) + \Phi\!\left(-z_{\alpha/2} - \frac{\sqrt{n}|\mu_1|}{\sigma}\right)$$
+
+The second term is negligible except for very small $n$, so the approximation $\beta \approx \Phi(-z_{\alpha/2} + \sqrt{n}|\mu_1|/\sigma)$ is standard.
+
+## The power-sample size curve
+
+Power increases monotonically with $n$ for any fixed $\delta > 0$. As $n \to \infty$, power $\to 1$ for any $\delta \neq 0$ — all consistent tests eventually detect any non-null. This is why statistical significance without effect size reporting is misleading: with enough data, even a trivially small effect becomes "significant."

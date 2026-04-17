@@ -1,0 +1,70 @@
+---
+title: Bias-Variance Tradeoff
+slug: bias-variance
+topic: Estimation Theory
+difficulty: 3
+tags: [bias-variance, generalization, regularization, polynomial-regression, ridge]
+prerequisites: [clt, distributions]
+leadsTo: [kernel-methods, gaussian-process]
+description: The fundamental decomposition of generalization error into irreducible noise, squared bias, and estimation variance.
+keyResults:
+  - "E[(y − f̂(x))²] = σ² + Bias²[f̂(x)] + Var[f̂(x)]"
+  - "Ridge hat matrix: H_λ = X(XᵀX + λI)⁻¹Xᵀ"
+  - "Effective df = tr(H_λ) = Σⱼ dⱼ²/(dⱼ² + λ)"
+  - "Optimal h* = (R(K)/(κ₂² n ∫f''²))^{1/5} → MISE ~ O(n^{-4/5})"
+relatedWidgets: [bias-variance]
+---
+
+# Bias-Variance Tradeoff
+
+For any estimator f̂ trained on a random dataset D of size n, the expected test error at a fixed point x decomposes as:
+
+**E_D[(y − f̂(x))²] = σ² + Bias²[f̂(x)] + Var[f̂(x)]**
+
+where:
+- **σ² = E[(y − f(x))²]** — irreducible noise variance, cannot be reduced
+- **Bias²[f̂(x)] = (E_D[f̂(x)] − f(x))²** — systematic error from wrong model family
+- **Var[f̂(x)] = E_D[(f̂(x) − E_D[f̂(x)])²]** — sensitivity to the random training set
+
+These three terms sum to the MSE. The tradeoff: reducing bias (by increasing model complexity) typically increases variance, and vice versa.
+
+<Widget id="bias-variance" />
+
+## What to observe
+
+1. **Press "Run simulation"** — this trains 40 polynomial models on independently drawn training sets of size 20
+2. **Switch to "Bias²/Var/MSE curve"** — observe the U-shaped MSE curve with bias falling and variance rising as degree increases
+3. **Low degree (1–2)**: high bias (mean prediction systematically differs from truth), low variance (all fits look similar)
+4. **High degree (10–12)**: low bias (enough capacity to fit the truth), high variance (fits diverge wildly across datasets)
+5. **Try the Step function** — high-frequency features require high degree, but that degree introduces extreme variance
+
+## The decomposition in matrix form
+
+For polynomial regression of degree d with design matrix `X ∈ ℝ^{n×(d+1)}`, the fitted values are:
+
+**ŷ = X(X^TX)⁻¹X^Ty = Hy**
+
+where H = X(X^TX)⁻¹X^T is the **hat matrix** (projection onto the column space of X). Then:
+
+- **E[ŷ] = Hf** (f = true signal)
+- **Bias(x*) = (h*^T − e_*^T) f** where h* = influence vector at test point
+- **Var(x*) = σ² h*^T h*** = σ² ||h*||²
+
+This shows that variance is large when the test point needs large extrapolation (h* has large norm).
+
+## Connection to regularization
+
+Ridge regression adds λ||β||² to the loss, giving β̂ = (X^TX + λI)⁻¹X^Ty. This:
+- **Increases bias** — the estimator is shrunk toward zero
+- **Decreases variance** — the solution is more stable to perturbations in y
+
+The ridge hat matrix is H_λ = X(X^TX + λI)⁻¹X^T, and effective degrees of freedom = tr(H_λ) = Σ_j d_j²/(d_j² + λ), where d_j are singular values of X. As λ → ∞, df → 0 (full regularization). As λ → 0, df → d+1 (ordinary least squares).
+
+## Optimal complexity
+
+The optimal model complexity balances bias and variance. It depends on:
+- **Sample size n**: larger n reduces variance for any fixed complexity, shifting the optimal point toward more complex models
+- **Noise level σ**: higher noise → variance dominates sooner → prefer simpler models
+- **True function smoothness**: a smooth true function is well-approximated by low-degree polynomials; discontinuities require high degree or different function classes
+
+This is why cross-validation works: it directly estimates the test MSE across complexity levels without needing to decompose into bias and variance.

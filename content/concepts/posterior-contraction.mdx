@@ -1,0 +1,65 @@
+---
+title: Posterior Contraction
+slug: posterior-contraction
+topic: Bayesian Inference
+difficulty: 5
+tags: [posterior-contraction, nonparametric-bayes, concentration, ghosal-van-der-vaart, sieve]
+prerequisites: [bernstein-von-mises, conjugate-priors]
+leadsTo: []
+description: Posterior contraction rates characterize how fast the Bayesian posterior concentrates around the truth in nonparametric settings. The Ghosal-Ghosh-van der Vaart framework gives sufficient conditions in terms of prior mass and metric entropy.
+keyResults:
+  - "Posterior contracts at rate εₙ if Π(d(θ,θ₀)>Mεₙ|Xⁿ)→0 in probability"
+  - "Sufficient: prior puts enough mass in εₙ-balls AND the model is not too complex"
+  - "Parametric: εₙ = 1/√n (BvM). Nonparametric Gaussian process: εₙ = n^{−α/(2α+d)}"
+  - "Sieve condition: log N(εₙ, Θₙ, d) ≤ nεₙ² (metric entropy of model sieve)"
+---
+
+# Posterior Contraction Rates
+
+In the parametric Bernstein-von Mises theorem, the posterior concentrates at rate $1/\sqrt{n}$. In nonparametric models, the truth $\theta_0$ lives in an infinite-dimensional space and the rate depends on the prior's ability to put mass near $\theta_0$.
+
+## Definition
+
+The posterior contracts around $\theta_0$ at rate $\varepsilon_n$ (with $\varepsilon_n \to 0$) if for any $M_n \to \infty$:
+
+$$\Pi\!\left(d(\theta, \theta_0) > M_n \varepsilon_n \;\middle|\; X_1, \ldots, X_n\right) \xrightarrow{P_{\theta_0}} 0$$
+
+where $d$ is an appropriate metric (Hellinger, total variation, $L^2$, etc.).
+
+## Ghosal-Ghosh-van der Vaart Framework
+
+The key theorem gives sufficient conditions on the prior and model. Let $\Theta_n$ be a sieve (growing subset of $\Theta$). The posterior contracts at rate $\varepsilon_n$ if:
+
+**Condition 1 (Prior mass)**: The prior assigns enough mass near the truth:
+$$\Pi(\theta: d_{KL}(\theta_0, \theta) \leq \varepsilon_n^2, V(\theta_0,\theta) \leq \varepsilon_n^2) \geq e^{-n\varepsilon_n^2}$$
+
+where $V$ is the second KL divergence moment.
+
+**Condition 2 (Complexity)**: The sieve is not too complex:
+$$\log N(\varepsilon_n, \Theta_n, d) \leq n\varepsilon_n^2$$
+
+(metric entropy of the sieve with $\varepsilon_n$-balls).
+
+**Condition 3 (Prior on complement)**: $\Pi(\Theta_n^c) \leq e^{-4n\varepsilon_n^2}$.
+
+## Parametric case
+
+In a $k$-dimensional parametric model:
+- Prior mass condition: satisfied for any $\theta_0$ in the interior if prior is continuous — gives $\varepsilon_n^2 \asymp 1/n$, so $\varepsilon_n \asymp 1/\sqrt{n}$.
+- This recovers the Bernstein-von Mises rate.
+
+## Gaussian process prior
+
+For nonparametric regression $Y_i = f(x_i) + \varepsilon_i$ with $f$ in a Sobolev space $H^\alpha$ (smoothness $\alpha$) and a GP prior with Matérn covariance:
+
+$$\varepsilon_n \asymp n^{-\alpha/(2\alpha + d)}$$
+
+This matches the **minimax rate** for Sobolev-$\alpha$ functions — the posterior is rate-adaptive.
+
+## Adaptive rates via hyperpriors
+
+Putting a prior on the bandwidth/lengthscale of the GP prior enables **adaptation**: the posterior automatically achieves the optimal rate even when $\alpha$ is unknown. This is one of the major advantages of Bayesian nonparametrics over plug-in frequentist methods.
+
+## Credible sets and coverage
+
+Unlike parametric BvM, nonparametric credible intervals may not have correct frequentist coverage. For adaptive priors, credible intervals at one smoothness may under-cover at other smoothnesses. Szabo et al. (2015) showed this fundamental limitation: adaptive Bayesian credible sets cannot have uniform coverage guarantees.

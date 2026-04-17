@@ -1,0 +1,63 @@
+---
+title: Local Asymptotic Normality
+slug: lan
+topic: Asymptotic Theory
+difficulty: 5
+tags: [lan, local-asymptotic-normality, le-cam, contiguity, asymptotic-efficiency]
+prerequisites: [clt-variants, delta-method, mle]
+leadsTo: [contiguity]
+description: Local Asymptotic Normality (LAN) is Le Cam's framework showing that regular parametric models look like a Gaussian shift experiment locally. It gives the deepest justification for MLE efficiency and the asymptotic minimax theorem.
+keyResults:
+  - "LAN: log(dPⁿ_{θ+h/√n}/dPⁿ_θ) = h·Δn − h²I(θ)/2 + op(1)"
+  - "Δn →d N(0, I(θ)) under Pⁿ_θ — the central sequence"
+  - "Hájek-Le Cam: asymptotically efficient iff T=θ̂_{MLE} up to o_p(1/√n)"
+  - "Convolution theorem: any regular estimator = efficient estimator + noise"
+---
+
+# Local Asymptotic Normality
+
+**LAN** (Lucien Le Cam, 1960) is the rigorous foundation for asymptotic efficiency. It says: locally (in a $1/\sqrt{n}$ neighborhood), any regular statistical model behaves like observing $\mathbf{Z} = h + \boldsymbol\epsilon$ where $\boldsymbol\epsilon \sim N(0, I(\theta)^{-1})$.
+
+## The LAN condition
+
+Let $X_1,\ldots,X_n \sim f(\cdot;\theta)$ and consider reparametrizing by $h$ via $\theta_n = \theta + h/\sqrt{n}$. The **log-likelihood ratio** satisfies:
+
+$$\log \frac{dP_{\theta_n}^n}{dP_\theta^n} = h^\top \Delta_n(\theta) - \frac{1}{2}h^\top I(\theta) h + o_p(1) \quad \text{under } P_\theta^n$$
+
+where $\Delta_n(\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^n \nabla_\theta \log f(X_i;\theta)$ is the **central sequence** (scaled score), and:
+
+$$\Delta_n(\theta) \xrightarrow{d} N(0, I(\theta)) \quad \text{under } P_\theta^n$$
+
+## Interpretation
+
+This says the log-likelihood increment is (asymptotically) a quadratic function of $h$ with a random linear term $h^\top \Delta_n$. The model locally looks like a Gaussian shift: estimating $h$ from $\Delta_n$ is equivalent to observing $Z = h + \epsilon$ with $\epsilon \sim N(0, I^{-1})$.
+
+## Hájek-Le Cam Convolution Theorem
+
+For any **regular** estimator sequence $T_n$ of $g(\theta)$:
+
+$$\sqrt{n}(T_n - g(\theta)) \xrightarrow{d} g'(\theta) \cdot N(0, I(\theta)^{-1}) * G$$
+
+where $G$ is some probability measure (possibly degenerate). The efficient estimator achieves $G = \delta_0$ — no extra noise. Any other regular estimator has additional variance from $G$.
+
+**Consequence**: The MLE is asymptotically efficient, and no regular estimator can beat it.
+
+## Anderson's Lemma and Local Minimax
+
+Le Cam's minimax theorem: for any bowl-shaped (subconvex) loss function $\ell$:
+
+$$\liminf_{n\to\infty} \sup_{|h| \leq M} E_{P^n_{\theta+h/\sqrt{n}}}[\ell(\sqrt{n}(T_n - \theta - h/\sqrt{n}))] \geq E[\ell(Z)]$$
+
+where $Z \sim N(0, I(\theta)^{-1})$. The MLE achieves this bound.
+
+## LAN for exponential families
+
+For exponential family models, LAN holds at every interior point of the parameter space, with $I(\theta) = A''(\eta)$ (the Hessian of the log-partition function). The central sequence is $\sqrt{n}(\bar T_n - A'(\eta))$.
+
+## Superefficiency
+
+The **Hodges estimator** demonstrates that non-regular estimators can beat the Cramér-Rao bound at isolated points:
+
+$$T_n = \begin{cases} \bar X_n & |\bar X_n| > n^{-1/4} \\ 0 & |\bar X_n| \leq n^{-1/4} \end{cases}$$
+
+At $\mu = 0$: $\sqrt{n}T_n \to 0$ (beats CRB). But at every other $\mu$: same asymptotic variance as $\bar X_n$. The LAN framework shows superefficiency can only occur on a Lebesgue-null set (Hájek, 1970).

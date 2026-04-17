@@ -1,0 +1,73 @@
+---
+title: Conjugate Priors
+slug: conjugate-priors
+topic: Bayesian Inference
+difficulty: 3
+tags: [conjugate-prior, posterior, bayesian-update, exponential-family, prior-strength]
+prerequisites: [exponential-family, distributions]
+leadsTo: [bernstein-von-mises, posterior-contraction, mcmc]
+description: Conjugate priors produce posteriors in the same distributional family as the prior, enabling closed-form Bayesian updates. Every exponential family has a conjugate prior with a simple additive update rule.
+keyResults:
+  - "Conjugate: π(θ|x) ∝ f(x|θ)·π(θ) stays in the same family as π"
+  - "Beta-Binomial: Beta(α,β) + Bin(n,p) → Beta(α+k, β+n−k)"
+  - "Gamma-Poisson: Gamma(α,β) + Pois(λ) → Gamma(α+n·x̄, β+n)"
+  - "Normal-Normal: N(μ₀,τ²) + N(μ,σ²) → posterior with precision-weighted mean"
+---
+
+# Conjugate Priors
+
+A prior $\pi(\theta)$ is **conjugate** to a likelihood $f(\mathbf{x}|\theta)$ if the posterior $\pi(\theta|\mathbf{x}) \propto f(\mathbf{x}|\theta)\pi(\theta)$ belongs to the same parametric family as the prior.
+
+Conjugacy enables exact, closed-form posterior computation — no MCMC needed.
+
+<Widget id="conjugate-analysis" />
+
+## Beta-Binomial Conjugacy
+
+**Likelihood**: $X \sim \text{Bin}(n, p)$, so $f(x|p) \propto p^x(1-p)^{n-x}$
+
+**Prior**: $p \sim \text{Beta}(\alpha, \beta)$, so $\pi(p) \propto p^{\alpha-1}(1-p)^{\beta-1}$
+
+**Posterior**:
+$$p | x \sim \text{Beta}(\alpha + x, \;\beta + n - x)$$
+
+The prior pseudo-counts $(\alpha, \beta)$ add directly to the observed counts $(x, n-x)$.
+
+**Posterior mean**: $\hat p = (\alpha + x)/(\alpha + \beta + n)$ — a weighted average of the prior mean $\alpha/(\alpha+\beta)$ and MLE $x/n$.
+
+## Gamma-Poisson Conjugacy
+
+**Likelihood**: $X_1,\ldots,X_n \sim \text{Pois}(\lambda)$
+
+**Prior**: $\lambda \sim \text{Gamma}(\alpha, \beta)$
+
+**Posterior**:
+$$\lambda | \mathbf{x} \sim \text{Gamma}\!\left(\alpha + n\bar x,\; \beta + n\right)$$
+
+## Normal-Normal Conjugacy
+
+**Likelihood**: $X_1,\ldots,X_n \sim N(\mu, \sigma^2)$ ($\sigma^2$ known)
+
+**Prior**: $\mu \sim N(\mu_0, \tau_0^2)$
+
+**Posterior**: $\mu | \mathbf{x} \sim N(\mu_1, \tau_1^2)$ where:
+
+$$\frac{1}{\tau_1^2} = \frac{1}{\tau_0^2} + \frac{n}{\sigma^2}, \quad \mu_1 = \tau_1^2\left(\frac{\mu_0}{\tau_0^2} + \frac{n\bar x}{\sigma^2}\right)$$
+
+The posterior precision (reciprocal variance) is the **sum** of prior and data precisions.
+
+## General exponential family conjugate
+
+For $f(x|\eta) = h(x)\exp(\eta T(x) - A(\eta))$, the conjugate prior is:
+
+$$\pi(\eta; \tau, n_0) \propto \exp\!\left(\eta^\top \tau - n_0 A(\eta)\right)$$
+
+The posterior is $\pi(\eta; \tau + \sum T(x_i), n_0 + n)$ — additive update.
+
+## Prior strength interpretation
+
+The hyperparameters can be interpreted as "prior data": a $\text{Beta}(\alpha, \beta)$ prior corresponds to having previously observed $\alpha - 1$ successes and $\beta - 1$ failures. As $n \to \infty$, the prior is overwhelmed by the data — a formal statement of this is the Bernstein-von Mises theorem.
+
+## Improper priors
+
+The uniform prior $\pi(p) = 1$ on $[0,1]$ is $\text{Beta}(1,1)$ — a conjugate prior with unit pseudo-counts. The Jeffreys prior $\pi(p) \propto [p(1-p)]^{-1/2}$ is $\text{Beta}(1/2, 1/2)$, chosen to be invariant under reparametrization.

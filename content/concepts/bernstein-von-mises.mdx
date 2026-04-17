@@ -1,0 +1,65 @@
+---
+title: Bernstein-von Mises Theorem
+slug: bernstein-von-mises
+topic: Bayesian Inference
+difficulty: 5
+tags: [bernstein-von-mises, posterior-normality, bayesian-asymptotics, prior-consistency, efficiency]
+prerequisites: [conjugate-priors, lan, mle]
+leadsTo: [posterior-contraction]
+description: The Bernstein-von Mises theorem establishes that, in regular parametric models, the posterior distribution converges to a Gaussian centered at the MLE with variance equal to the inverse Fisher information — regardless of the prior.
+keyResults:
+  - "||P(√n(θ−θ̂ₙ)∈·|X^n) − N(0,I(θ₀)⁻¹)||_TV → 0 in probability"
+  - "Posterior mean ≈ MLE asymptotically; credible intervals ≈ confidence intervals"
+  - "Prior becomes irrelevant as n→∞ (prior is 'forgotten')"
+  - "Fails for infinite-dimensional θ, irregular models, or misspecification"
+---
+
+# Bernstein-von Mises Theorem
+
+The **Bernstein-von Mises (BvM) theorem** is the cornerstone of Bayesian asymptotics. It reconciles Bayesian and frequentist inference in large samples: the posterior concentrates around the MLE at rate $1/\sqrt{n}$, and after centering and scaling it converges to a normal distribution.
+
+## The theorem (parametric case)
+
+Let $X_1,\ldots,X_n \sim f(\cdot;\theta_0)$ with prior $\pi(\theta)$ positive and continuous at $\theta_0$. Under regularity conditions:
+
+$$\left\| \mathcal{L}\!\left(\sqrt{n}(\theta - \hat\theta_n) \;\middle|\; X_1,\ldots,X_n\right) - N\!\left(0, I(\theta_0)^{-1}\right) \right\|_{TV} \xrightarrow{P_{\theta_0}} 0$$
+
+where $\hat\theta_n$ is the MLE and $\|\cdot\|_{TV}$ is total variation distance.
+
+<Widget id="conjugate-analysis" />
+
+## Implications
+
+**Credible intervals become confidence intervals**: A $95\%$ posterior credible interval $[\theta_L, \theta_U]$ satisfies $P_{\theta_0}(\theta_0 \in [\theta_L, \theta_U]) \to 0.95$ — it is asymptotically a $95\%$ confidence interval.
+
+**Prior is forgotten**: The specific choice of prior (as long as it is positive and continuous at $\theta_0$) becomes irrelevant for large $n$. The posterior is determined by the likelihood.
+
+**Bayesian efficiency**: The posterior mean achieves the Cramér-Rao bound asymptotically, just like the MLE.
+
+## Convergence rate
+
+The posterior concentrates around $\theta_0$ at rate $1/\sqrt{n}$:
+
+$$\Pi\!\left(\left|\theta - \theta_0\right| > M/\sqrt{n} \;\middle|\; X^n\right) \to 0$$
+
+for any $M \to \infty$.
+
+## When BvM fails
+
+1. **Infinite-dimensional parameters** (nonparametric Bayesian): BvM can fail even with large $n$; the prior and specific model structure matter.
+
+2. **Misspecification**: if the true distribution is not in the model, the posterior concentrates around the "closest" parameter in KL divergence, but Gaussian convergence may fail.
+
+3. **Non-identifiability**: if $\theta$ is not identifiable, the posterior cannot converge.
+
+4. **Non-regular models**: boundary parameters, hierarchical models with non-smooth Fisher information.
+
+5. **Strong prior**: an extremely informative prior can overwhelm the data if $n$ is not large enough.
+
+## Second-order Bernstein-von Mises
+
+Going beyond first order, the posterior mean and MLE differ by $O(1/n)$, and the posterior variance differs from the inverse Fisher information by $O(1/n)$. These higher-order corrections depend on the prior and give rise to the Bayesian information criterion (BIC).
+
+## Historical note
+
+The theorem was proved in various forms by Bernstein (1917) and von Mises (1931). The rigorous modern treatment is in Le Cam and Yang (2000). Extensions to semiparametric and nonparametric settings are ongoing research.

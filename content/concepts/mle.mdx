@@ -1,0 +1,81 @@
+---
+title: Maximum Likelihood Estimation
+slug: mle
+topic: Estimation Theory
+difficulty: 3
+tags: [mle, likelihood, optimization, asymptotic-efficiency, information]
+prerequisites: [fisher-information, distributions]
+leadsTo: [cramer-rao-bound, exponential-family, likelihood-ratio]
+description: The maximum likelihood estimator maximizes the probability of the observed data. Under regularity conditions, it is consistent, asymptotically normal, and achieves the Cramér-Rao bound in large samples.
+keyResults:
+  - "MLE: θ̂ = argmax_θ L(θ;x) = argmax_θ Σ log f(xᵢ;θ)"
+  - "Score equation: Σᵢ ∂/∂θ log f(xᵢ;θ̂) = 0"
+  - "Asymptotic normality: √n(θ̂−θ₀) →d N(0, I(θ₀)⁻¹)"
+  - "Invariance: if θ̂ is MLE of θ, then g(θ̂) is MLE of g(θ)"
+---
+
+# Maximum Likelihood Estimation
+
+The **maximum likelihood estimator** (MLE) is the parameter value that makes the observed data most probable:
+
+$$\hat\theta_{MLE} = \arg\max_{\theta \in \Theta} L(\theta; \mathbf{x}) = \arg\max_{\theta} \prod_{i=1}^n f(x_i; \theta)$$
+
+In practice, maximize the **log-likelihood** (same argmax, numerically better):
+
+$$\hat\theta = \arg\max_\theta \ell(\theta; \mathbf{x}), \quad \ell(\theta) = \sum_{i=1}^n \log f(x_i;\theta)$$
+
+<Widget id="cramer-rao-explorer" />
+
+## The score equation
+
+The MLE satisfies the **score equation** (first-order condition):
+
+$$\sum_{i=1}^n \frac{\partial}{\partial\theta}\log f(x_i;\hat\theta) = 0$$
+
+For regular families this has a unique solution; for multimodal likelihoods, numerical methods may find local maxima.
+
+## Examples
+
+**Normal** ($\sigma^2$ known): $\hat\mu = \bar{X}$ (sample mean)
+
+**Normal** (both unknown):
+$$\hat\mu = \bar{X}, \quad \hat\sigma^2 = \frac{1}{n}\sum_{i=1}^n(X_i - \bar{X})^2$$
+
+Note: $\hat\sigma^2$ is *biased* (divides by $n$, not $n-1$), but asymptotically negligible.
+
+**Exponential**($\lambda$): $\hat\lambda = 1/\bar{X}$
+
+**Bernoulli**($p$): $\hat p = \bar{X}$
+
+**Poisson**($\lambda$): $\hat\lambda = \bar{X}$
+
+## Asymptotic properties
+
+Under regularity conditions (Wald 1949, Cramér 1946):
+
+**Consistency**: $\hat\theta_n \xrightarrow{p} \theta_0$
+
+**Asymptotic normality**:
+$$\sqrt{n}(\hat\theta_n - \theta_0) \xrightarrow{d} N\!\left(0, I(\theta_0)^{-1}\right)$$
+
+**Asymptotic efficiency**: The MLE achieves the Cramér-Rao bound asymptotically — no consistent estimator can have smaller asymptotic variance.
+
+## Invariance principle
+
+If $\hat\theta$ is the MLE of $\theta$, then $g(\hat\theta)$ is the MLE of $g(\theta)$ for any function $g$. This makes MLEs easy to transform: to estimate the standard deviation, just take the square root of $\hat\sigma^2$.
+
+## Observed vs expected Fisher information
+
+The **expected** Fisher information uses the true parameter: $I(\theta) = E[-\ell''(\theta)]$
+
+The **observed** Fisher information uses the data at the MLE:
+
+$$\hat I = -\frac{1}{n}\sum_{i=1}^n \frac{\partial^2}{\partial\theta^2}\log f(x_i;\hat\theta)$$
+
+Efron and Hinkley (1978) argued the observed information is often more appropriate for finite-sample inference.
+
+## Common misconception
+
+> "MLE is always unbiased."
+
+False. The MLE is biased for finite samples in general. For example, the MLE of $\sigma^2$ in a normal model divides by $n$ (biased), not $n-1$ (unbiased). However, the bias vanishes asymptotically.

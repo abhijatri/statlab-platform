@@ -1,0 +1,83 @@
+---
+title: Fisher Information
+slug: fisher-information
+topic: Estimation Theory
+difficulty: 3
+tags: [fisher-information, cramér-rao, information-geometry, efficiency, score]
+prerequisites: [distributions, clt]
+leadsTo: [cramer-rao-bound, sufficiency, mle]
+description: The Fisher information quantifies how much a random variable's distribution tells us about an unknown parameter, and sets the fundamental lower bound on estimator variance.
+keyResults:
+  - "I(θ) = E[(∂/∂θ log f(X;θ))²] = −E[∂²/∂θ² log f(X;θ)]"
+  - "For n iid observations: I_n(θ) = n·I(θ)"
+  - "Score function: s(X;θ) = ∂/∂θ log f(X;θ) has E[s]=0, Var[s]=I(θ)"
+  - "Normal: I(μ)=1/σ², I(σ²)=1/(2σ⁴). Bernoulli: I(p)=1/(p(1−p))"
+---
+
+# Fisher Information
+
+Fisher information measures how sharply the log-likelihood is curved around its maximum — or equivalently, how sensitively a distribution's density changes as the parameter varies.
+
+## Definition via the score function
+
+The **score function** is the gradient of the log-likelihood:
+
+$$s(X; \theta) = \frac{\partial}{\partial \theta} \log f(X; \theta)$$
+
+The score has a remarkable property: its expected value is **always zero** under the true model, provided regularity conditions hold (interchange of differentiation and integration):
+
+$$E_\theta[s(X;\theta)] = 0$$
+
+Fisher information is the **variance of the score**:
+
+$$I(\theta) = \text{Var}_\theta[s(X;\theta)] = E_\theta\!\left[\left(\frac{\partial}{\partial\theta}\log f(X;\theta)\right)^{\!2}\right]$$
+
+<Widget id="cramer-rao-explorer" />
+
+## Equivalent curvature form
+
+Under mild regularity (twice-differentiable log-likelihood with dominated convergence), Fisher information equals the negative expected second derivative of the log-likelihood:
+
+$$I(\theta) = -E_\theta\!\left[\frac{\partial^2}{\partial\theta^2}\log f(X;\theta)\right]$$
+
+This makes intuitive sense: a sharply curved log-likelihood (large negative curvature) means the data are very informative about θ.
+
+## Examples
+
+**Normal distribution** $X \sim N(\mu, \sigma^2)$ with $\sigma^2$ known:
+
+$$\log f(x;\mu) = -\frac{(x-\mu)^2}{2\sigma^2} + \text{const}, \quad I(\mu) = \frac{1}{\sigma^2}$$
+
+**Bernoulli** $X \sim \text{Bern}(p)$:
+
+$$I(p) = \frac{1}{p(1-p)}$$
+
+The information diverges as $p \to 0$ or $p \to 1$ — extreme Bernoullis are highly informative.
+
+**Exponential** $X \sim \text{Exp}(\lambda)$:
+
+$$I(\lambda) = \frac{1}{\lambda^2}$$
+
+**Poisson** $X \sim \text{Pois}(\lambda)$:
+
+$$I(\lambda) = \frac{1}{\lambda}$$
+
+## Additivity for iid samples
+
+For $n$ iid observations $X_1, \ldots, X_n \sim f(\cdot;\theta)$, the joint Fisher information is:
+
+$$I_n(\theta) = n \cdot I(\theta)$$
+
+This additivity is why the Cramér-Rao bound tightens at rate $1/n$.
+
+## Fisher information matrix (multiparameter)
+
+For a parameter vector $\theta \in \mathbb{R}^k$, the **Fisher information matrix** has entries:
+
+$$(I(\theta))_{ij} = E\!\left[\frac{\partial \log f}{\partial \theta_i} \cdot \frac{\partial \log f}{\partial \theta_j}\right] = -E\!\left[\frac{\partial^2 \log f}{\partial \theta_i \, \partial \theta_j}\right]$$
+
+This matrix appears in the multivariate Cramér-Rao bound and in the asymptotic variance of the MLE.
+
+## Historical note
+
+Ronald A. Fisher introduced this quantity in his 1925 paper *Theory of Statistical Estimation*, where he proved that the maximum likelihood estimator is asymptotically efficient. The geometric interpretation — that Fisher information is a Riemannian metric on the space of probability distributions — was developed by Rao (1945) and later became the foundation of **information geometry**.

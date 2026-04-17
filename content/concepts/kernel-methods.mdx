@@ -1,0 +1,76 @@
+---
+title: Kernel Methods
+slug: kernel-methods
+topic: Estimation Theory
+difficulty: 4
+tags: [kernel-methods, nadaraya-watson, kde, rkhs, representer-theorem, bandwidth]
+prerequisites: [bias-variance, eigendecomposition]
+leadsTo: []
+description: Nadaraya-Watson regression, kernel density estimation, and the RKHS structure that underlies all kernel learning.
+keyResults:
+  - "NW estimator: f̂(x) = Σᵢ Kₕ(x−xᵢ)yᵢ / Σᵢ Kₕ(x−xᵢ)"
+  - "Optimal bandwidth: h* = (R(K)/(κ₂² n ∫f''²))^{1/5}"
+  - "MISE ~ O(n^{-4/5}) — slower than parametric O(n^{-1})"
+  - "Representer theorem: f*(x) = Σᵢ αᵢ K(x, xᵢ)"
+relatedWidgets: [kernel-viz]
+---
+
+# Kernel Methods
+
+A **kernel** K: ℝ × ℝ → ℝ is a function that measures similarity between inputs. In nonparametric statistics, kernels appear in two related contexts:
+
+1. **Density estimation** — estimating an unknown distribution from samples
+2. **Regression** — estimating an unknown function from noisy observations
+
+Both are unified by the theory of **Reproducing Kernel Hilbert Spaces (RKHS)**.
+
+<Widget id="kernel-viz" />
+
+## Nadaraya-Watson estimator
+
+Given training pairs (x₁, y₁), …, (xₙ, yₙ), the Nadaraya-Watson (1964) estimator is:
+
+**f̂(x) = Σᵢ K_h(x − xᵢ) yᵢ / Σᵢ K_h(x − xᵢ)**
+
+where K_h(u) = K(u/h)/h is the **scaled kernel**. This is a **local weighted average**: observations near x get high weight, distant ones get low weight.
+
+The bandwidth **h** controls the scale of influence:
+- Small h → each point influences only its immediate neighborhood → rough, high-variance estimate
+- Large h → all points contribute nearly equally → smooth, high-bias estimate
+
+## Kernels compared
+
+| Kernel | K(u) | Support | Notes |
+|--------|------|---------|-------|
+| Gaussian | `(2π)^{-1/2} exp(−u²/2)` | ℝ | Infinitely smooth, light tails |
+| Epanechnikov | `¾(1−u²)·𝟏_{|u|≤1}` | [−1,1] | Optimal MSE among kernels |
+| Laplacian | ½ exp(−|u|) | ℝ | Non-differentiable at 0 |
+| Uniform | `½·𝟏_{|u|≤1}` | [−1,1] | Equivalent to local average |
+
+All are symmetric, integrate to 1, and have zero mean. The **Epanechnikov kernel** minimizes the asymptotic MISE (mean integrated squared error) among all kernels.
+
+## Kernel density estimation
+
+For density estimation, the KDE is:
+
+**f̂(x) = (1/nh) Σᵢ K((x − xᵢ)/h)**
+
+The KDE panel shows each individual kernel (faint lines) sitting at each observation, summing to the total density estimate. The **rug plot** at the bottom marks the raw observations.
+
+Asymptotically, the optimal bandwidth minimizes:
+- **Bias**: h² (κ₂/2) f''(x), where κ₂ = ∫u²K(u)du
+- **Variance**: (1/nh) ||K||² f(x)
+
+The optimal MSE-minimizing bandwidth is `h* = (R(K) / (κ₂² n ∫f''²))^{1/5}`, giving MISE ~ O(n^{-4/5}), slower than the parametric O(n^{-1}) rate because we're estimating an infinite-dimensional object.
+
+## RKHS intuition
+
+Every positive definite kernel K defines a Hilbert space H_K of functions where the **reproducing property** holds: ⟨f, K(x, ·)⟩ = f(x) for all f ∈ H_K.
+
+The RKHS norm `||f||_{H_K}` measures complexity of f with respect to the kernel's notion of smoothness. The **representer theorem** guarantees that the solution to any regularized empirical risk minimization:
+
+`minimize_{f ∈ H_K} Σᵢ L(yᵢ, f(xᵢ)) + λ||f||²_{H_K}`
+
+has the form f\*(x) = Σᵢ αᵢ K(x, xᵢ). This means we only need to work with the n×n kernel matrix `K_{ij} = K(xᵢ, xⱼ)`, not the infinite-dimensional function space — the **kernel trick**.
+
+Gaussian process regression with kernel k is equivalent to kernel ridge regression in the RKHS defined by k, with regularization parameter λ = σ²_n/σ²_f.

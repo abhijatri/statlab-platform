@@ -1,0 +1,84 @@
+---
+title: Distribution Explorer — Normal, Cauchy & Lévy
+slug: distribution-explorer
+topic: Probability Theory
+subtopic: Tail Behaviour
+difficulty: 2
+tags: [distributions, heavy-tails, stable-distributions, cauchy, levy, normal]
+prerequisites: [probability-space, distributions]
+leadsTo: [extreme-value-theory, stable-distributions, risk-measures]
+description: >
+  Compare Normal, Cauchy, and Lévy distributions — three members of the stable family
+  with radically different tail behaviour. All three share a bell-like peak but diverge
+  dramatically in the tails, their moments, and their convergence properties under averaging.
+keyResults:
+  - "Normal: all moments exist; CLT holds; tails decay as e^{−x²/2}"
+  - "Cauchy: mean and variance undefined; sample mean doesn't converge; tails ∝ 1/x²"
+  - "Lévy: one-sided; mean, variance all infinite; tail ∝ x^{−3/2}"
+  - "All three are α-stable: Cauchy (α=1), Normal (α=2), Lévy (α=1/2)"
+relatedWidgets: [distribution-explorer]
+lastUpdated: "2026-04-17"
+---
+
+## Three Faces of Stability
+
+Normal, Cauchy, and Lévy are all members of the **stable distribution** family — distributions
+that are closed under convolution (sums of i.i.d. copies are the same shape, just rescaled).
+The stability index $\alpha$ controls tail weight:
+
+| Distribution | $\alpha$ | Mean | Variance | Tail $P(X>x)$ |
+|-------------|----------|------|----------|---------------|
+| Normal      | 2        | $\mu$ | $\sigma^2$ | $\sim e^{-x^2/2\sigma^2}$ |
+| Cauchy      | 1        | — | — | $\sim \frac{\gamma}{\pi x^2}$ |
+| Lévy        | 1/2      | — | — | $\sim \sqrt{\frac{c}{2\pi}}\,x^{-3/2}$ |
+
+<Intuition>
+On the PDF plot, all three look like a vaguely bell-shaped bump near the centre.
+The dramatic difference is in the tails — use the "Tail P(X > x)" sparkline in the
+controls to see this on a log scale.
+A Cauchy tail at $x=10$ can be $10^4\times$ heavier than a Normal tail at the same location.
+</Intuition>
+
+<Widget id="distribution-explorer" />
+
+## Normal Distribution
+
+$$
+f(x;\mu,\sigma) = \frac{1}{\sigma\sqrt{2\pi}}\exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+$$
+
+All moments are finite. The CLT says that sums of any finite-variance population converge to
+this distribution. The tails decay super-exponentially — probabilities beyond $4\sigma$ are
+below $10^{-4}$.
+
+## Cauchy Distribution
+
+$$
+f(x;x_0,\gamma) = \frac{1}{\pi\gamma\!\left[1+\left(\frac{x-x_0}{\gamma}\right)^2\right]}
+$$
+
+The mean integral $\int_{-\infty}^\infty x\,f(x)\,dx$ diverges — not just to $\pm\infty$,
+but oscillates. The sample mean of Cauchy i.i.d. draws has the *same* Cauchy distribution
+regardless of $n$ — averaging does not help. This makes Cauchy the canonical
+"CLT counterexample."
+
+## Lévy Distribution
+
+$$
+f(x;\mu,c) = \sqrt{\frac{c}{2\pi}}\,\frac{e^{-c/[2(x-\mu)]}}{(x-\mu)^{3/2}}, \quad x > \mu
+$$
+
+One-sided (supported on $(\mu, \infty)$) with a $x^{-3/2}$ power-law tail.
+Arises naturally as the first-passage time of a Brownian motion — the time $T$ until a
+random walk first hits a positive threshold. Its CDF has the closed form:
+
+$$
+F(x;\mu,c) = \operatorname{erfc}\!\left(\sqrt{\frac{c}{2(x-\mu)}}\right)
+$$
+
+## Tail Heaviness and Risk
+
+The log-scale tail sparkline in the explorer makes the differences concrete.
+A financial loss model using a Normal underestimates $P(\text{loss} > 10\sigma)$ by
+many orders of magnitude compared to a Cauchy or Lévy — the 2008 financial crisis
+is a canonical example of this misspecification.

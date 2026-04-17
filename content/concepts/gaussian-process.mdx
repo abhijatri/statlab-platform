@@ -1,0 +1,70 @@
+---
+title: Gaussian Processes
+slug: gaussian-process
+topic: Bayesian Inference
+difficulty: 4
+tags: [gaussian-process, bayesian, kernels, posterior-inference, cholesky, non-parametric]
+prerequisites: [distributions, lebesgue-integration]
+leadsTo: [kernel-methods]
+description: A distribution over functions, not parameters — Bayesian non-parametric regression with exact posterior inference.
+keyResults:
+  - "f ~ GP(m, k) — prior over functions defined by mean m(x) and kernel k(x,x')"
+  - "Posterior mean: μ* = K_{*X}(K_{XX} + σ²_n I)⁻¹ y"
+  - "Posterior var: Σ* = K_{**} − K_{*X}(K_{XX} + σ²_n I)⁻¹ K_{X*}"
+  - "Log marginal likelihood: −½yᵀKy⁻¹y − ½log|Ky| − n/2 log(2π)"
+relatedWidgets: [gaussian-process]
+---
+
+# Gaussian Processes
+
+A **Gaussian Process** (GP) is a collection of random variables, any finite subset of which is jointly Gaussian. Rather than placing a prior over a finite-dimensional parameter vector, a GP places a prior directly over *functions* f : ℝ → ℝ.
+
+We write **f ~ GP(m, k)** where:
+- **m(x) = E[f(x)]** is the mean function (often set to zero)
+- **k(x, x') = Cov[f(x), f(x')]** is the covariance (kernel) function
+
+## Kernels encode inductive bias
+
+The choice of kernel encodes beliefs about the function's smoothness, periodicity, and scale:
+
+| Kernel | Formula | Property |
+|--------|---------|----------|
+| RBF / Squared-Exp | k(x,x') = σ²_f exp(−|x−x'|²/2ℓ²) | Infinitely differentiable, very smooth |
+| Matérn 3/2 | k = σ²_f(1 + √3r/ℓ)exp(−√3r/ℓ) | Once mean-square differentiable, rougher |
+| Periodic | k = σ²_f exp(−2sin²(πd/p)/ℓ²) | Exactly periodic with period p |
+| Linear | k(x,x') = σ²_f xx'/ℓ² | Equivalent to Bayesian linear regression |
+
+The **length scale ℓ** controls how quickly correlations decay with distance. The **signal variance σ²_f** controls the prior variance of function values.
+
+## Posterior inference
+
+Given noisy observations **y = f(X) + ε**, where ε ~ N(0, σ²_n I), the posterior over function values at test points X* is exactly Gaussian:
+
+**f* | X*, X, y ~ N(μ*, Σ*)**
+
+where:
+- **μ\*** = `K_{*X}(K_{XX} + σ²_n I)⁻¹ y`
+- **Σ\*** = `K_{**} − K_{*X}(K_{XX} + σ²_n I)⁻¹ K_{X*}`
+
+This is computed via **Cholesky decomposition** of `K_{XX} + σ²_n I` (O(n³)), which is the dominant cost. For n ≤ a few thousand, exact inference is tractable.
+
+<Widget id="gaussian-process" />
+
+## What to explore
+
+- **Click the plot** to add observations. Watch the posterior collapse around each point.
+- **Increase σ_n** (noise) — the posterior widens, reflecting uncertainty about the true signal.
+- **Compare kernels**: RBF produces smooth interpolants; Matérn 3/2 allows kinks; Periodic locks to a frequency; Linear gives straight-line extrapolation.
+- **Prior samples** (second tab) — draw 5 functions from the GP prior. Notice how structure like smoothness and periodicity is already encoded before seeing any data.
+
+## Hyperparameter interpretation
+
+The three core hyperparameters have direct interpretations:
+
+| Parameter | Effect too small | Effect too large |
+|-----------|-----------------|-----------------|
+| ℓ (length scale) | Wiggly, overfit | Over-smooth, rigid |
+| σ_f (signal std) | Posterior near zero | Very wide prior |
+| σ_n (noise std) | Interpolates exactly | Ignores observations |
+
+In practice, hyperparameters are tuned by maximizing the **log marginal likelihood** log p(y | X, θ) = −½ y^T K_y⁻¹ y − ½ log|K_y| − n/2 log(2π), which balances data fit against model complexity.

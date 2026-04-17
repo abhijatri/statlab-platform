@@ -1,0 +1,240 @@
+---
+title: Eigendecomposition
+slug: eigendecomposition
+topic: Linear Algebra
+subtopic: Spectral Theory
+difficulty: 3
+tags: [linear-algebra, spectral-theory, symmetric-matrices, diagonalization]
+prerequisites: [linear-maps, determinant, inner-product-space]
+leadsTo: [pca, singular-value-decomposition, matrix-exponential, quadratic-forms]
+description: >
+  Eigendecomposition expresses a linear map in terms of its intrinsic directions —
+  eigenvectors — and their associated scaling factors — eigenvalues.
+  The Spectral Theorem for real symmetric matrices guarantees orthogonal diagonalizability
+  with real eigenvalues, underpinning PCA, quadratic form analysis, and matrix ODEs.
+keyResults:
+  - "Av = λv iff det(A − λI) = 0 (characteristic equation)"
+  - "Real symmetric A: all eigenvalues real, eigenvectors for distinct λ are orthogonal"
+  - "Spectral theorem: A = QΛQᵀ, Q orthogonal, Λ = diag(λ₁,...,λₙ)"
+  - "Aⁿ = QΛⁿQᵀ; e^{tA} = Qe^{tΛ}Qᵀ — powers and exponentials are trivial after decomposition"
+  - "Rayleigh quotient: λ_min ≤ xᵀAx/‖x‖² ≤ λ_max for symmetric A"
+relatedWidgets: [eigendecomposition-explorer]
+lastUpdated: "2026-04-16"
+---
+
+## Intuition
+
+<Intuition>
+A matrix $A \in \mathbb{R}^{n \times n}$ defines a linear map: it takes any vector $x$ and produces $Ax$.
+For a generic vector $x$, the map both **stretches** and **rotates** it — $Ax$ points in a different direction from $x$.
+
+An **eigenvector** is a special direction that the map does *not* rotate: applying $A$ to $v$ merely rescales it.
+The scale factor is the **eigenvalue** $\lambda$. Geometrically, $v$ spans a line that is preserved by $A$.
+
+The payoff: once we find all such invariant directions, we can describe $A$ completely in terms of
+stretches (eigenvalues) along orthogonal axes (eigenvectors). Repeated application of $A$ becomes trivial:
+$A^n v_i = \lambda_i^n v_i$.
+
+For **symmetric** matrices (which arise naturally in statistics as covariance matrices and Hessians),
+the picture is especially clean: all eigenvalues are real, all eigenvectors are orthogonal,
+and the decomposition always exists.
+</Intuition>
+
+## Eigenvalues and Eigenvectors
+
+<Definition number={1} name="Eigenvalue and Eigenvector">
+Let $A \in \mathbb{R}^{n \times n}$. A scalar $\lambda \in \mathbb{C}$ is an **eigenvalue** of $A$
+and a nonzero vector $v \in \mathbb{C}^n$ is a corresponding **eigenvector** if
+$$Av = \lambda v, \qquad v \neq 0.$$
+The **eigenspace** associated with $\lambda$ is
+$$E(\lambda) = \ker(A - \lambda I) = \{v \in \mathbb{C}^n : Av = \lambda v\}.$$
+</Definition>
+
+<Remark number={1}>
+The zero vector satisfies $A \cdot 0 = \lambda \cdot 0$ trivially and is excluded from the definition.
+The eigenspace $E(\lambda)$ is always a subspace; when $\lambda$ is actually an eigenvalue,
+$\dim E(\lambda) \geq 1$.
+</Remark>
+
+<Theorem number={1} name="Characteristic Equation">
+$\lambda$ is an eigenvalue of $A$ if and only if
+$$p(\lambda) := \det(A - \lambda I) = 0.$$
+The function $p : \mathbb{C} \to \mathbb{C}$ is the **characteristic polynomial** of $A$,
+a polynomial of degree $n$ in $\lambda$.
+</Theorem>
+
+<Proof label="Proof of Theorem 1">
+$\lambda$ is an eigenvalue iff the equation $Av = \lambda v$ has a nonzero solution,
+iff $(A - \lambda I)v = 0$ has a nonzero solution,
+iff $A - \lambda I$ is **singular**,
+iff $\det(A - \lambda I) = 0$.
+</Proof>
+
+<Remark number={2} title="Algebraic and Geometric Multiplicity">
+By the Fundamental Theorem of Algebra, $p(\lambda)$ has exactly $n$ roots in $\mathbb{C}$
+(counted with multiplicity). The **algebraic multiplicity** of $\lambda_i$ is its multiplicity as a
+root of $p$. The **geometric multiplicity** is $\dim E(\lambda_i)$. One always has
+$$1 \leq \dim E(\lambda_i) \leq \text{algebraic multiplicity}(\lambda_i).$$
+Diagonalizability requires equality for every eigenvalue.
+</Remark>
+
+---
+
+## Diagonalization
+
+<Definition number={2} name="Diagonalizable Matrix">
+$A \in \mathbb{R}^{n \times n}$ is **diagonalizable** over $\mathbb{R}$ if there exists an
+invertible $P \in \mathbb{R}^{n \times n}$ and diagonal $\Lambda = \mathrm{diag}(\lambda_1, \ldots, \lambda_n)$
+with all $\lambda_i \in \mathbb{R}$ such that
+$$A = P\Lambda P^{-1}.$$
+The columns of $P$ are eigenvectors; the diagonal entries of $\Lambda$ are the corresponding eigenvalues.
+</Definition>
+
+<Theorem number={2} name="Diagonalizability Criterion">
+$A$ is diagonalizable over $\mathbb{R}$ if and only if there exist $n$ linearly independent
+real eigenvectors. Equivalently, the geometric multiplicity equals the algebraic multiplicity
+for every real eigenvalue, and all eigenvalues are real.
+</Theorem>
+
+<Example number={1} title="Diagonalization of a 2×2 Matrix">
+Let $A = \begin{pmatrix} 3 & 1 \\ 0 & 2 \end{pmatrix}$.
+
+**Characteristic polynomial:** $p(\lambda) = (3-\lambda)(2-\lambda) = 0$, so $\lambda_1 = 3$, $\lambda_2 = 2$.
+
+**Eigenvectors:**
+- $\lambda_1 = 3$: $(A - 3I)v = 0 \Rightarrow \begin{pmatrix}0&1\\0&-1\end{pmatrix}v = 0 \Rightarrow v_1 = \begin{pmatrix}1\\0\end{pmatrix}$.
+- $\lambda_2 = 2$: $(A - 2I)v = 0 \Rightarrow \begin{pmatrix}1&1\\0&0\end{pmatrix}v = 0 \Rightarrow v_2 = \begin{pmatrix}-1\\1\end{pmatrix}$.
+
+**Decomposition:**
+$$A = P\Lambda P^{-1}, \quad P = \begin{pmatrix}1&-1\\0&1\end{pmatrix}, \quad \Lambda = \begin{pmatrix}3&0\\0&2\end{pmatrix}.$$
+</Example>
+
+---
+
+## The Spectral Theorem for Real Symmetric Matrices
+
+This is the central result for statistical applications.
+
+<Theorem number={3} name="Spectral Theorem (Real Symmetric Matrices)">
+Let $A \in \mathbb{R}^{n \times n}$ be **symmetric** ($A = A^\top$). Then:
+
+1. All eigenvalues of $A$ are **real**.
+2. Eigenvectors corresponding to **distinct** eigenvalues are **orthogonal**.
+3. There exists an orthogonal matrix $Q$ (i.e., $Q^\top Q = I$) and a diagonal matrix
+   $\Lambda = \mathrm{diag}(\lambda_1, \ldots, \lambda_n)$ with $\lambda_i \in \mathbb{R}$ such that
+   $$A = Q\Lambda Q^\top.$$
+</Theorem>
+
+<Proof label="Proof of the Spectral Theorem">
+**Part 1: Eigenvalues are real.**
+Let $Av = \lambda v$ with $v \in \mathbb{C}^n$, $v \neq 0$.
+Form the Hermitian inner product:
+$$\bar{v}^\top (Av) = \bar{v}^\top (\lambda v) = \lambda \|v\|^2.$$
+Also, since $A$ is real symmetric ($A = A^\top = \bar{A}$), we have $A^* = \bar{A}^\top = A$, so:
+$$\bar{v}^\top (Av) = (A^* \bar{v})^\top v = (A\bar{v})^\top v = \overline{(Av)^\top v} = \overline{\lambda} \|v\|^2.$$
+Comparing: $\lambda\|v\|^2 = \bar{\lambda}\|v\|^2$, and $\|v\|^2 > 0$, so $\lambda = \bar\lambda$, i.e., $\lambda \in \mathbb{R}$.
+
+**Part 2: Eigenvectors for distinct eigenvalues are orthogonal.**
+Let $Av = \lambda v$ and $Aw = \mu w$ with $\lambda \neq \mu$ (both real).
+$$\lambda (v^\top w) = (Av)^\top w = v^\top (A^\top w) = v^\top (Aw) = \mu (v^\top w).$$
+So $(\lambda - \mu)(v^\top w) = 0$. Since $\lambda \neq \mu$, we get $v^\top w = 0$.
+
+**Part 3: Orthogonal diagonalizability (by induction on $n$).**
+*Base case* $n = 1$: trivial.
+
+*Inductive step:* Assume the result holds for all real symmetric $(n-1)\times(n-1)$ matrices.
+Since $p(\lambda) = \det(A - \lambda I)$ has real coefficients and all roots are real (Part 1),
+$p$ has at least one root $\lambda_1 \in \mathbb{R}$. Let $q_1$ be a unit eigenvector: $Aq_1 = \lambda_1 q_1$.
+
+Let $V = q_1^\perp = \{x \in \mathbb{R}^n : q_1^\top x = 0\}$, a subspace of dimension $n-1$.
+For any $x \in V$: $q_1^\top(Ax) = (A^\top q_1)^\top x = (Aq_1)^\top x = \lambda_1 q_1^\top x = 0$,
+so $Ax \in V$. The map $A|_V : V \to V$ is represented by an $(n-1)\times(n-1)$ real symmetric matrix
+$A_1$ (in any orthonormal basis of $V$).
+
+By induction, $A_1 = Q_1 \Lambda_1 Q_1^\top$ with $Q_1$ orthogonal.
+Assembling $Q = [q_1 \mid Q_1]$ and $\Lambda = \mathrm{diag}(\lambda_1, \Lambda_1)$
+gives $A = Q\Lambda Q^\top$.
+</Proof>
+
+---
+
+## Rayleigh Quotient
+
+<Definition number={3} name="Rayleigh Quotient">
+For a real symmetric matrix $A$ and nonzero $x \in \mathbb{R}^n$, the **Rayleigh quotient** is
+$$R_A(x) = \frac{x^\top A x}{x^\top x} = \frac{x^\top A x}{\|x\|^2}.$$
+</Definition>
+
+<Theorem number={4} name="Extremal Characterisation of Eigenvalues">
+Let $A$ be real symmetric with eigenvalues $\lambda_1 \leq \lambda_2 \leq \cdots \leq \lambda_n$.
+Then:
+$$\lambda_1 = \min_{x \neq 0} R_A(x), \qquad \lambda_n = \max_{x \neq 0} R_A(x).$$
+
+More generally, the **Courant-Fischer min-max theorem** gives:
+$$\lambda_k = \min_{\substack{S \subseteq \mathbb{R}^n \\ \dim S = k}}\; \max_{x \in S,\, x \neq 0} R_A(x).$$
+</Theorem>
+
+<Proof collapsible defaultOpen={false} label="Proof of the Min-Max for λ₁ and λₙ">
+Write $x = \sum_i c_i q_i$ in the eigenbasis $\{q_i\}$.
+Then
+$$R_A(x) = \frac{\sum_i \lambda_i c_i^2}{\sum_i c_i^2}.$$
+This is a convex combination of the $\lambda_i$ with weights $c_i^2/\sum c_j^2 \geq 0$.
+Hence $\lambda_1 \leq R_A(x) \leq \lambda_n$.
+The minimum $\lambda_1$ is achieved at $x = q_1$ (set $c_1 = 1$, all others 0);
+the maximum $\lambda_n$ at $x = q_n$.
+</Proof>
+
+---
+
+## Applications in Statistics
+
+### Powers of a Matrix
+
+If $A = Q\Lambda Q^\top$, then $A^n = Q\Lambda^n Q^\top$ where $\Lambda^n = \mathrm{diag}(\lambda_1^n, \ldots, \lambda_n^n)$. 
+This reduces matrix powering to scalar powering along each eigendirection.
+
+### Matrix Exponential
+
+$$e^{tA} = Q\,e^{t\Lambda}\,Q^\top = Q\,\mathrm{diag}(e^{t\lambda_1},\ldots,e^{t\lambda_n})\,Q^\top.$$
+
+This is the solution operator for the linear ODE $\dot{x} = Ax$.
+
+### Principal Component Analysis
+
+For a sample covariance matrix $\Sigma = \frac{1}{n}X^\top X$ (a real symmetric positive semidefinite matrix),
+the Spectral Theorem gives $\Sigma = Q\Lambda Q^\top$.
+
+The columns of $Q$ are the **principal directions**; the eigenvalues $\lambda_i$ are the **explained variances**.
+The first principal component is the direction $q_1$ maximising $\mathrm{Var}(q_1^\top x) = q_1^\top \Sigma q_1$,
+which by Theorem 4 equals $\lambda_n$ (the largest eigenvalue).
+
+### Quadratic Forms
+
+For real symmetric $A$, the quadratic form $q(x) = x^\top Ax$ satisfies:
+$$x^\top Ax = \sum_{i=1}^n \lambda_i (q_i^\top x)^2.$$
+
+Therefore:
+- $A$ is **positive definite** ($q(x) > 0$ for $x \neq 0$) iff all $\lambda_i > 0$.
+- $A$ is **positive semidefinite** iff all $\lambda_i \geq 0$.
+- The **condition number** $\kappa(A) = \lambda_n / \lambda_1$ governs numerical stability of linear solves.
+
+---
+
+## Interactive Exploration
+
+<Widget id="eigendecomposition-explorer" title="Eigendecomposition Explorer" height={400} />
+
+---
+
+## Non-Symmetric Matrices: Jordan Normal Form
+
+<Remark number={3}>
+For non-symmetric or complex matrices, the Spectral Theorem fails. The substitute is the
+**Jordan normal form**: every matrix $A \in \mathbb{C}^{n \times n}$ is similar to a block-diagonal
+matrix $J = P^{-1}AP$ whose blocks are Jordan blocks
+$J_k(\lambda) = \lambda I + N$ where $N$ has ones on the superdiagonal.
+A matrix is diagonalizable iff all Jordan blocks are $1 \times 1$.
+
+For the singular value decomposition, which applies to *all* real matrices (not just symmetric),
+see SVD.
+</Remark>

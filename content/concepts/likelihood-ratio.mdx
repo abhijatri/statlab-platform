@@ -1,0 +1,73 @@
+---
+title: Likelihood Ratio Tests
+slug: likelihood-ratio
+topic: Hypothesis Testing
+difficulty: 3
+tags: [likelihood-ratio, wilks-theorem, chi-squared, composite, profile-likelihood]
+prerequisites: [mle, neyman-pearson]
+leadsTo: [power-analysis, ump-tests]
+description: The generalized likelihood ratio test is the workhorse of composite hypothesis testing. Wilks' theorem shows that twice the log-ratio is asymptotically chi-squared, enabling easy p-value computation.
+keyResults:
+  - "Λ(x) = sup_{θ∈Θ₀} L(θ;x) / sup_{θ∈Θ} L(θ;x) ∈ [0,1]"
+  - "Wilks: −2 log Λ →d χ²(r) under H₀, where r = dim(Θ)−dim(Θ₀)"
+  - "Reject H₀ iff −2 log Λ > χ²_{α,r} (chi-squared critical value)"
+  - "Equivalent to score test and Wald test asymptotically (Trinity of tests)"
+---
+
+# Likelihood Ratio Tests
+
+The **generalized likelihood ratio** (GLR) is:
+
+$$\Lambda(\mathbf{x}) = \frac{\sup_{\theta \in \Theta_0} L(\theta;\mathbf{x})}{\sup_{\theta \in \Theta} L(\theta;\mathbf{x})} \in [0,1]$$
+
+Reject $H_0$ when $\Lambda$ is small — meaning the data are much better explained by the unrestricted model than by the null model.
+
+Equivalently, reject when $-2\log\Lambda$ is large.
+
+## Wilks' Theorem
+
+Under $H_0$ and regularity conditions, as $n \to \infty$:
+
+$$-2\log\Lambda(\mathbf{X}) \xrightarrow{d} \chi^2_r$$
+
+where $r = \dim(\Theta) - \dim(\Theta_0)$ is the number of constraints imposed by $H_0$.
+
+This is one of the most useful results in statistics: any composite hypothesis test has an asymptotic chi-squared null distribution with degrees of freedom equal to the number of constraints.
+
+<Widget id="power-function" />
+
+## Examples
+
+**Testing a single normal mean** ($\sigma^2$ known): $H_0: \mu = \mu_0$.
+
+$$-2\log\Lambda = n(\bar X - \mu_0)^2 / \sigma^2 = Z^2 \sim \chi^2_1$$
+
+Equivalent to the square of the z-statistic.
+
+**Goodness of fit (multinomial)**: $H_0: \mathbf{p} = \mathbf{p}_0$.
+
+$$-2\log\Lambda = 2\sum_{j=1}^k O_j \log\frac{O_j}{E_j} \approx \chi^2_{k-1}$$
+
+**Independence in a contingency table**: $r = (R-1)(C-1)$ degrees of freedom.
+
+## Profile likelihood
+
+For a model $\theta = (\psi, \lambda)$ where $\psi$ is the parameter of interest and $\lambda$ is a nuisance:
+
+$$L_p(\psi) = \sup_\lambda L(\psi, \lambda; \mathbf{x})$$
+
+The profile likelihood ratio test for $H_0: \psi = \psi_0$ uses $-2\log[L_p(\psi_0)/L_p(\hat\psi)]$, which is still asymptotically $\chi^2$ under $H_0$.
+
+## The Holy Trinity
+
+For testing $H_0: \theta = \theta_0$ the three classical tests are asymptotically equivalent:
+
+1. **Wald**: $(\hat\theta - \theta_0)^\top [I(\hat\theta)](\hat\theta - \theta_0) \sim \chi^2_r$
+2. **Score (Rao)**: $s(\theta_0)^\top [I(\theta_0)]^{-1} s(\theta_0) \sim \chi^2_r$
+3. **LR (Wilks)**: $-2\log\Lambda \sim \chi^2_r$
+
+All three are equal to first order in $n^{-1}$, but differ in finite samples. The LR test has the best higher-order properties in most settings.
+
+## Limitations
+
+Wilks' theorem requires regularity conditions: the null must be an interior point of the parameter space, the Fisher information must be positive definite, and the true model must be identifiable. These fail for, e.g., testing $\sigma^2 = 0$ (boundary) or testing the number of components in a mixture model.

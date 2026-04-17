@@ -1,0 +1,76 @@
+---
+title: Central Limit Theorem Simulator
+slug: clt
+topic: Probability Theory
+subtopic: Limit Theorems
+difficulty: 2
+tags: [central-limit-theorem, sampling-distributions, convergence, normal-distribution]
+prerequisites: [probability-space, distributions]
+leadsTo: [law-of-large-numbers, hypothesis-testing, confidence-intervals]
+description: >
+  The Central Limit Theorem (CLT) is the cornerstone of statistical inference: regardless of
+  the shape of the population distribution, the sample mean X̄ₙ converges in distribution to
+  a Normal as the sample size n grows. Explore this convergence interactively across four
+  fundamentally different population shapes.
+keyResults:
+  - "CLT: √n(X̄ₙ − μ) →ᵈ N(0, σ²) for any finite-variance population"
+  - "Rate of convergence depends on population skewness (Berry-Esseen: O(1/√n))"
+  - "Bimodal and right-skewed populations converge more slowly — need larger n"
+  - "Pareto and heavy-tailed distributions converge only when α > 2 (finite variance)"
+relatedWidgets: [clt-simulator]
+lastUpdated: "2026-04-17"
+---
+
+## The Sampling Distribution of the Mean
+
+Pick any population with mean $\mu$ and variance $\sigma^2 < \infty$.
+Draw $n$ independent observations and form their average $\bar{X}_n$.
+The CLT says:
+
+$$
+\sqrt{n}\,\frac{\bar{X}_n - \mu}{\sigma} \;\xrightarrow{d}\; \mathcal{N}(0,1)
+\quad \text{as } n\to\infty
+$$
+
+The target distribution does not depend on the shape of the population at all — only on $\mu$ and $\sigma^2$.
+
+<Intuition>
+The magic: averaging n independent copies dilutes any individual quirk of the population.
+Extreme values average out, skewness flattens, and the only surviving structure is the
+mean and variance. Try the Bimodal or Pareto population — they look nothing like a Normal,
+but watch what happens to their sample means as n grows.
+</Intuition>
+
+<Widget id="clt-simulator" />
+
+## What to Observe
+
+**Uniform\[0, 1\]:** Already nearly symmetric — the histogram looks close to Normal even at $n=2$.
+
+**Exponential($\lambda=1$):** Right-skewed (skewness = 2). You need $n \approx 10$--$25$ before the
+histogram loses its right lean.
+
+**Bimodal Mixture:** The two humps are obvious at $n=1$. By $n=5$--$10$, they merge into a single
+bell — the central peak of the normal wins.
+
+**Pareto($\alpha=3$):** Finite variance ($\sigma^2=0.75$), but fat right tail. Convergence is
+slow because the Berry-Esseen bound depends on the third absolute moment, which is large.
+
+## The Berry-Esseen Bound
+
+The CLT gives the *direction* of convergence; Berry-Esseen gives its *rate*:
+
+$$
+\sup_x \left| P\!\left(\frac{\bar{X}_n - \mu}{\sigma/\sqrt{n}} \le x\right) - \Phi(x) \right|
+\;\le\; \frac{C\,\rho}{\sigma^3\,\sqrt{n}}
+$$
+
+where $\rho = \mathbb{E}[|X - \mu|^3]$ is the third absolute central moment and $C \le 0.4748$.
+Populations with large $\rho/\sigma^3$ (high skewness or fat third moment) need larger $n$.
+
+## When the CLT Fails
+
+The finite-variance condition $\sigma^2 < \infty$ is essential.
+For a Pareto with $\alpha \le 2$, the variance is infinite and the sample mean does not
+converge to a Normal — it converges to a **stable distribution** instead.
+This is why heavy-tailed financial data requires models beyond the CLT.

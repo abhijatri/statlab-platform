@@ -1,0 +1,73 @@
+---
+title: UMP & UMPU Tests
+slug: ump-tests
+topic: Hypothesis Testing
+difficulty: 4
+tags: [ump, umpu, uniformly-most-powerful, karlin-rubin, two-sided]
+prerequisites: [neyman-pearson, exponential-family]
+leadsTo: [likelihood-ratio, power-analysis]
+description: Uniformly Most Powerful tests extend the Neyman-Pearson optimality from simple to composite hypotheses. UMP tests exist for one-sided alternatives in monotone likelihood ratio families; two-sided tests require the UMPU refinement.
+keyResults:
+  - "Karlin-Rubin: MLR family + one-sided H₁ → UMP test exists, rejects for large T"
+  - "UMP test for H₀:θ≤θ₀ vs H₁:θ>θ₀ in exp family: reject iff T(X)>c"
+  - "Two-sided: no UMP exists in general; UMPU restricts to unbiased tests"
+  - "UMPU for two-sided normal: standard t-test with equal-tail critical region"
+---
+
+# UMP and UMPU Tests
+
+A **Uniformly Most Powerful (UMP) test** for testing $H_0: \theta \in \Theta_0$ vs $H_1: \theta \in \Theta_1$ is a size-$\alpha$ test whose power is at least as large as any other size-$\alpha$ test, **for every** $\theta \in \Theta_1$.
+
+The Neyman-Pearson lemma gives the UMP test for simple hypotheses. For composite hypotheses, we need additional structure.
+
+## Monotone Likelihood Ratio (MLR) Families
+
+A family $\{f(x;\theta)\}$ has a **monotone likelihood ratio** in a statistic $T(x)$ if for $\theta_1 > \theta_2$:
+
+$$\frac{f(x;\theta_1)}{f(x;\theta_2)} \text{ is non-decreasing in } T(x)$$
+
+All one-parameter exponential families have MLR in the sufficient statistic $T(x)$.
+
+## Karlin-Rubin Theorem
+
+If the family has MLR in $T$, then for $H_0: \theta \leq \theta_0$ vs $H_1: \theta > \theta_0$:
+
+**Reject $H_0$ iff $T(X) > c$** (where $P_{\theta_0}(T > c) = \alpha$)
+
+is the **UMP size-$\alpha$ test**.
+
+Intuition: larger values of $T$ provide monotonically increasing evidence for $\theta > \theta_0$.
+
+<Widget id="power-function" />
+
+## Examples of UMP tests
+
+**Normal mean, $\sigma^2$ known**: test $\mu \leq 0$ vs $\mu > 0$ — UMP is $\bar{X} > z_\alpha / \sqrt{n}$.
+
+**Poisson**: test $\lambda \leq \lambda_0$ vs $\lambda > \lambda_0$ — UMP rejects for large $\sum X_i$.
+
+**Bernoulli**: test $p \leq p_0$ vs $p > p_0$ — UMP rejects for large $\bar{X}$.
+
+## Why UMP doesn't exist for two-sided tests
+
+For $H_0: \theta = \theta_0$ vs $H_1: \theta \neq \theta_0$, a UMP test would need to:
+- Reject more often than the one-sided left test when $\theta < \theta_0$
+- Reject more often than the one-sided right test when $\theta > \theta_0$
+
+These requirements are mutually inconsistent (the two one-sided tests use opposite rejection regions), so no UMP exists in general.
+
+## Uniformly Most Powerful Unbiased (UMPU) Tests
+
+A test $\phi$ is **unbiased** if its power never falls below $\alpha$:
+
+$$E_\theta[\phi(X)] \geq \alpha \quad \forall \theta \in \Theta_1$$
+
+Among unbiased size-$\alpha$ tests, there often exists a **UMPU** test.
+
+For the two-sided normal problem $H_0: \mu = \mu_0$ vs $H_1: \mu \neq \mu_0$ (with unknown $\sigma^2$):
+
+The UMPU test is the **two-sided t-test**: reject if $|T_{n-1}| > t_{\alpha/2, n-1}$.
+
+## Lehmann's non-existence result
+
+For two-sided testing of a location parameter with a symmetric distribution, no UMP test exists. The UMPU test is the symmetric critical region that splits $\alpha$ equally. For asymmetric distributions or asymmetric alternatives, the UMPU test may use unequal tail probabilities.

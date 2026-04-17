@@ -1,0 +1,69 @@
+---
+title: Contiguity
+slug: contiguity
+topic: Asymptotic Theory
+difficulty: 5
+tags: [contiguity, le-cam, mutual-contiguity, testing, power]
+prerequisites: [lan, clt-variants]
+leadsTo: []
+description: Contiguity (Le Cam) formalizes when two sequences of probability measures are asymptotically indistinguishable. It is the key tool for understanding the limiting power of hypothesis tests under local alternatives.
+keyResults:
+  - "Pⁿ ◁ Qⁿ iff Pⁿ(Aₙ)→0 implies Qⁿ(Aₙ)→0 for all events Aₙ"
+  - "Le Cam's 1st lemma: Pⁿ ◁ Qⁿ iff Λₙ=dQⁿ/dPⁿ is tight under Pⁿ"
+  - "Le Cam's 3rd lemma: if (Δₙ,log Λₙ)→d(Z,W) under Pⁿ, then under Qⁿ: Δₙ→d Z+cov(Z,W)"
+  - "LAN implies Pⁿ_θ and Pⁿ_{θ+h/√n} are mutually contiguous"
+---
+
+# Contiguity
+
+**Contiguity** is Le Cam's way of comparing sequences of probability measures that are not absolutely continuous with respect to each other but are asymptotically close.
+
+## Definition
+
+$P_n$ is **contiguous** with respect to $Q_n$ (written $P_n \triangleleft Q_n$) if:
+
+$$Q_n(A_n) \to 0 \implies P_n(A_n) \to 0$$
+
+for every sequence of events $A_n$. Mutual contiguity ($P_n \triangleleft Q_n$ and $Q_n \triangleleft P_n$) is written $P_n \trianglelefteq Q_n$.
+
+Informally: $P_n$ and $Q_n$ cannot be distinguished with probability going to 1 by any sequence of tests.
+
+## Le Cam's First Lemma
+
+$P_n \triangleleft Q_n$ if and only if the likelihood ratio sequence $\Lambda_n = dQ_n/dP_n$ is **tight** under $P_n$: for every $\epsilon > 0$ there exists $M$ such that $P_n(\Lambda_n > M) < \epsilon$ for all large $n$.
+
+## Le Cam's Third Lemma
+
+This is the engine of local power calculations. Suppose under $P_n$:
+
+$$(\Delta_n, \log \Lambda_n) \xrightarrow{d} (Z, W)$$
+
+where $Z \sim N(0, I)$ and $(Z, W) \sim$ bivariate normal with $\text{Cov}(Z, W) = \tau$.
+
+Then under $Q_n$:
+
+$$\Delta_n \xrightarrow{d} Z + \tau$$
+
+**Application**: In the LAN setup with $Q_n = P_{\theta + h/\sqrt{n}}^n$:
+
+$$\log\Lambda_n = h^\top\Delta_n - h^\top I(\theta)h/2 + o_p(1)$$
+
+So $\text{Cov}(\Delta_n, \log\Lambda_n) = h^\top I(\theta)$. Under the local alternative, the central sequence shifts to $\Delta_n + I(\theta)h$, giving the asymptotic power of any test based on $\Delta_n$.
+
+## Application to hypothesis testing
+
+Consider testing $H_0: \theta = \theta_0$ vs $H_1: \theta = \theta_0 + h/\sqrt{n}$ using the score test $\phi_n = \mathbf{1}[\Delta_n^\top I(\theta_0)^{-1}\Delta_n > \chi^2_{\alpha,k}]$.
+
+Under $H_0$: $\Delta_n \to N(0, I(\theta_0))$ → size is $\alpha$.
+
+Under $H_1$ (using Le Cam 3): $\Delta_n \to N(h^\top I(\theta_0)^\top, I(\theta_0))$ → power is $P(Z > \chi^2_{\alpha,k})$ with non-centrality $\lambda = h^\top I(\theta_0) h$.
+
+The score, Wald, and likelihood ratio tests all give the same asymptotic power under contiguous alternatives.
+
+## Contiguity and LAN
+
+The LAN condition directly implies $P_\theta^n \trianglelefteq P_{\theta + h/\sqrt{n}}^n$ for all fixed $h$. This mutual contiguity is the formal justification that local alternatives at rate $1/\sqrt{n}$ are the "right" alternatives to study — faster alternatives are detectable with probability 1; slower alternatives are indistinguishable from $H_0$.
+
+## Historical note
+
+Lucien Le Cam introduced contiguity in his 1960 Annals of Mathematical Statistics paper. The third lemma appeared in his 1972 work. Together with LAN, it provides the rigorous foundation that van der Vaart's *Asymptotic Statistics* builds upon.

@@ -1,0 +1,65 @@
+---
+title: MCMC — Metropolis-Hastings
+slug: mcmc
+topic: Bayesian Inference
+difficulty: 3
+tags: [mcmc, metropolis-hastings, sampling, markov-chain, convergence, ess, autocorrelation]
+prerequisites: [distributions, clt]
+leadsTo: []
+description: Sampling from intractable distributions by constructing an ergodic Markov chain whose stationary distribution is the target.
+keyResults:
+  - "Acceptance ratio: α = min(1, π(x')q(x|x') / π(x)q(x'|x))"
+  - "Log-space: accept if log U(0,1) < log π(x') − log π(x)"
+  - "ESS = N / (1 + 2 Σₖ ρₖ) — effective independent samples"
+  - "Detailed balance: π(x)q(x'|x)α(x,x') = π(x')q(x|x')α(x',x)"
+relatedWidgets: [mcmc-simulator]
+---
+
+# Markov Chain Monte Carlo
+
+When a posterior distribution π(x) cannot be computed analytically or sampled from directly, **MCMC** constructs a Markov chain whose stationary distribution *is* π. After enough steps, samples from the chain are (approximately) draws from π.
+
+## Metropolis-Hastings algorithm
+
+Given the current state x, the algorithm:
+
+1. Propose x' ~ q(x' | x) — typically x' = x + ε, ε ~ N(0, σ²_prop)
+2. Compute acceptance ratio α = min(1, π(x')q(x|x') / π(x)q(x'|x))
+3. With probability α, set `x_{t+1}` = x'; otherwise `x_{t+1}` = x
+
+For symmetric proposals q(x'|x) = q(x|x'), the ratio simplifies to **α = min(1, π(x')/π(x))**.
+
+In practice, compute in log-space: **log α = log π(x') − log π(x)**, and accept if log U(0,1) < log α.
+
+<Widget id="mcmc-simulator" />
+
+## Diagnosing chain quality
+
+### Trace plot
+A healthy trace mixes rapidly — it should look like "white noise" around the target distribution, not drift or get stuck. Flat plateaus mean the proposal is too large (most proposals rejected). Very slow drift means the proposal is too small.
+
+### Acceptance rate
+- **Too high (> 60%)**: proposal σ too small, chain moves in tiny steps, slow mixing
+- **Too low (< 15%)**: proposal σ too large, most proposals rejected, slow mixing
+- **Optimal**: ~23.4% for a 1D Gaussian target (Roberts, Gelman & Gilks, 1997); ~44% for dimension 1, decreasing toward 23.4% as dimension grows
+
+### Autocorrelation function (ACF)
+High autocorrelation at small lags means successive samples are highly correlated — the chain is not mixing well. ACF should decay rapidly toward zero.
+
+### Effective Sample Size (ESS)
+`ESS = N / (1 + 2 Σ_{k=1}^∞ ρ_k)` where ρ_k is the lag-k autocorrelation. ESS measures how many *independent* samples the chain is worth. A chain of 3500 with ACF decaying after lag 10 might have ESS ≈ 300.
+
+## The bimodal challenge
+
+When the target has well-separated modes, a local proposal rarely bridges the gap. The chain gets trapped in one mode, giving biased estimates. Solutions include:
+- **Parallel tempering** — run chains at different temperatures, allow swaps
+- **Adaptive proposals** — tune σ during burn-in
+- **Hamiltonian Monte Carlo** — use gradient information to make large, informed proposals
+
+## Theoretical guarantee
+
+Under mild conditions (irreducibility, aperiodicity), the MH chain satisfies **detailed balance**:
+
+π(x) q(x'|x) α(x,x') = π(x') q(x|x') α(x',x)
+
+This is sufficient for π to be the unique stationary distribution. Ergodicity then guarantees that time averages converge to ensemble averages.

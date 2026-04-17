@@ -1,0 +1,225 @@
+---
+title: Law of Large Numbers
+slug: law-of-large-numbers
+topic: Asymptotic Theory
+subtopic: Convergence
+difficulty: 2
+tags: [convergence, probability, measure-theory, iid]
+prerequisites: [probability-space, expectation]
+leadsTo: [central-limit-theorem, ergodic-theory, berry-esseen]
+description: >
+  The weak and strong laws of large numbers establish that sample averages
+  converge to the population mean — in probability and almost surely, respectively.
+  The strong law requires only finite first moment; no finite variance is needed.
+keyResults:
+  - "WLLN: if E|X| < ∞, then X̄ₙ →_P E[X]"
+  - "SLLN (Kolmogorov): if E|X| < ∞, then X̄ₙ →_a.s. E[X]"
+  - "a.s. convergence implies convergence in probability (not vice versa)"
+  - "Chebyshev proof of WLLN requires Var(X) < ∞; char-fn proof needs only E|X| < ∞"
+  - "Rate: LIL gives lim sup √(n/2 log log n) |X̄ₙ - μ| = σ almost surely"
+relatedWidgets: [lln-convergence-demo]
+lastUpdated: "2026-04-16"
+---
+
+## Intuition
+
+<Intuition>
+Flip a fair coin repeatedly. After 10 flips, the proportion of heads might be far from $\tfrac{1}{2}$.
+After $10\,000$ flips, it will be close. After $10^9$ flips, it will be very close.
+
+The Law of Large Numbers makes this precise: the sample average
+$\bar{X}_n = \tfrac{1}{n}\sum_{i=1}^n X_i$
+stabilises around the population mean $\mu = E[X]$ as $n \to \infty$.
+
+There are two versions. The **Weak Law** says that the probability of being far from $\mu$ tends to zero.
+The **Strong Law** says something stronger: with probability one, the sample path
+$n \mapsto \bar{X}_n$ itself converges to $\mu$.
+The distinction is the difference between "unlikely to be far" and "will eventually stay close forever."
+</Intuition>
+
+## Setup
+
+<Definition number={1} name="Sample Mean">
+Let $X_1, X_2, \ldots$ be a sequence of random variables on a probability space
+$(\Omega, \mathcal{F}, P)$. The **sample mean** of the first $n$ observations is
+
+$$\bar{X}_n = \frac{1}{n} \sum_{i=1}^n X_i.$$
+</Definition>
+
+<Definition number={2} name="i.i.d. Sequence">
+A sequence $(X_n)_{n \geq 1}$ is **independent and identically distributed (i.i.d.)** if:
+1. The $X_i$ are mutually independent: $P(X_1 \in A_1, \ldots, X_k \in A_k) = \prod P(X_i \in A_i)$.
+2. All $X_i$ share the same distribution: $P(X_i \in A) = P(X_1 \in A)$ for all $i$ and Borel $A$.
+</Definition>
+
+We recall two modes of convergence that appear in the LLN.
+
+<Definition number={3} name="Convergence in Probability">
+A sequence of random variables $(T_n)$ **converges in probability** to $T$, written $T_n \xrightarrow{P} T$, if
+$$\forall\,\varepsilon > 0: \quad \lim_{n \to \infty} P\bigl(|T_n - T| > \varepsilon\bigr) = 0.$$
+</Definition>
+
+<Definition number={4} name="Almost Sure Convergence">
+$(T_n)$ **converges almost surely** to $T$, written $T_n \xrightarrow{\mathrm{a.s.}} T$, if
+$$P\!\left(\lim_{n \to \infty} T_n = T\right) = 1,$$
+i.e., there exists a null set $N \in \mathcal{F}$ with $P(N) = 0$ such that $T_n(\omega) \to T(\omega)$ for all $\omega \notin N$.
+</Definition>
+
+<Theorem number={1} name="Hierarchy of Convergence Modes">
+Almost sure convergence implies convergence in probability:
+$$T_n \xrightarrow{\mathrm{a.s.}} T \implies T_n \xrightarrow{P} T.$$
+The converse is false in general.
+</Theorem>
+
+<Proof collapsible defaultOpen={false} label="Proof of Theorem 1">
+Fix $\varepsilon > 0$. Define the events $A_n = \{|T_n - T| > \varepsilon\}$.
+
+Almost sure convergence means $P(\limsup_n A_n) = 0$, i.e.,
+$P\!\left(\bigcap_{N=1}^\infty \bigcup_{n \geq N} A_n\right) = 0$.
+
+Since $A_n \subseteq \bigcup_{k \geq n} A_k$, we have
+$P(A_n) \leq P\!\left(\bigcup_{k \geq n} A_k\right) \to 0$ as $n \to \infty$,
+where the last limit follows because $\bigcup_{k \geq n} A_k \downarrow \limsup_n A_n$
+and continuity of probability. Thus $P(A_n) \to 0$.
+</Proof>
+
+---
+
+## Weak Law of Large Numbers
+
+<Theorem number={2} name="Weak Law (Chebyshev)">
+Let $X_1, X_2, \ldots$ be i.i.d. with $E[X_1] = \mu$ and $\mathrm{Var}(X_1) = \sigma^2 < \infty$.
+Then
+$$\bar{X}_n \xrightarrow{P} \mu.$$
+</Theorem>
+
+<Proof label="Proof of Theorem 2">
+Since the $X_i$ are i.i.d., the sample mean satisfies $E[\bar{X}_n] = \mu$ and
+$$\mathrm{Var}(\bar{X}_n) = \frac{\sigma^2}{n}.$$
+
+By **Chebyshev's inequality**, for any $\varepsilon > 0$:
+$$P\!\left(|\bar{X}_n - \mu| > \varepsilon\right) \leq \frac{\mathrm{Var}(\bar{X}_n)}{\varepsilon^2} = \frac{\sigma^2}{n\varepsilon^2} \xrightarrow{n \to \infty} 0.$$
+</Proof>
+
+<Warning title="Finite Variance is Not Necessary">
+The Chebyshev proof uses $\mathrm{Var}(X) < \infty$, but this is an artifact of the proof technique,
+not a requirement of the result. The WLLN holds under the weaker condition $E|X| < \infty$.
+The proof in that generality uses **characteristic functions** (Theorem 3).
+</Warning>
+
+<Theorem number={3} name="Weak Law (Khinchin)">
+Let $X_1, X_2, \ldots$ be i.i.d. with $E[X_1] = \mu$ (finite mean, no variance assumption).
+Then $\bar{X}_n \xrightarrow{P} \mu$.
+</Theorem>
+
+<Proof collapsible defaultOpen={false} label="Proof via Characteristic Functions">
+Let $\varphi(t) = E[e^{itX_1}]$ be the characteristic function of $X_1$.
+Since $E|X_1| < \infty$, $\varphi$ is differentiable and $\varphi'(0) = i\mu$.
+
+The characteristic function of $\bar{X}_n$ is
+$$\varphi_{\bar{X}_n}(t) = E\!\left[\exp\!\left(it\bar{X}_n\right)\right] = \prod_{i=1}^n E\!\left[\exp\!\left(\frac{it}{n}X_i\right)\right] = \left[\varphi\!\left(\frac{t}{n}\right)\right]^n.$$
+
+For fixed $t$, as $n \to \infty$:
+$$\log \varphi\!\left(\frac{t}{n}\right) = \log\!\left(1 + i\mu\frac{t}{n} + o\!\left(\frac{1}{n}\right)\right) = i\mu\frac{t}{n} + o\!\left(\frac{1}{n}\right).$$
+
+Hence $n \log \varphi(t/n) \to i\mu t$, so
+$$\varphi_{\bar{X}_n}(t) = \left[\varphi\!\left(\frac{t}{n}\right)\right]^n \to e^{i\mu t}.$$
+
+The function $e^{i\mu t}$ is the characteristic function of the point mass $\delta_\mu$.
+By **Lévy's continuity theorem**, $\bar{X}_n \xrightarrow{d} \mu$ (convergence in distribution to a constant).
+Convergence in distribution to a constant is equivalent to convergence in probability.
+</Proof>
+
+---
+
+## Strong Law of Large Numbers
+
+<Theorem number={4} name="Strong Law (Kolmogorov)">
+Let $X_1, X_2, \ldots$ be i.i.d. with $E|X_1| < \infty$ and $E[X_1] = \mu$.
+Then
+$$\bar{X}_n \xrightarrow{\mathrm{a.s.}} \mu.$$
+</Theorem>
+
+The full proof of Kolmogorov's SLLN is more involved than the WLLN. We present the key ideas.
+
+<Proof collapsible defaultOpen={false} label="Proof Sketch (Truncation + Borel-Cantelli)">
+**Step 1: Truncation.** Define $Y_k = X_k \mathbf{1}_{\{|X_k| \leq k\}}$.
+Since $E|X_1| < \infty$, the truncated and original means have the same a.s. limit:
+one can show $\frac{1}{n}\sum_{k=1}^n (X_k - Y_k) \to 0$ a.s. using the first Borel-Cantelli lemma and the condition $\sum_{k=1}^\infty P(|X_1| > k) < \infty$ (which is equivalent to $E|X_1| < \infty$).
+
+**Step 2: Convergence of the truncated series.** For the truncated variables,
+$E[Y_k] \to \mu$ by dominated convergence. By the **Kronecker lemma**, it suffices to show
+$$\sum_{k=1}^\infty \frac{\mathrm{Var}(Y_k)}{k^2} < \infty.$$
+
+This bound follows from
+$\sum_{k=1}^\infty \frac{E[Y_k^2]}{k^2} \leq \sum_{k=1}^\infty \frac{1}{k^2} \int_0^k 2x\, P(|X_1| > x)\,dx$,
+which converges whenever $E|X_1| < \infty$ (by a Fubini-type exchange of summation and integration).
+
+**Conclusion.** Combining the two steps, $\bar{X}_n \to \mu$ a.s.
+</Proof>
+
+<Remark number={1}>
+The SLLN requires only $E|X_1| < \infty$, the same condition as the WLLN via characteristic functions
+(Theorem 3). The extra strength — a.s. convergence — costs nothing in terms of moment assumptions.
+</Remark>
+
+---
+
+## Interactive Exploration
+
+<Widget id="lln-convergence-demo" title="LLN Convergence Demo" height={380} />
+
+---
+
+## Almost Sure vs. In Probability: A Separation Example
+
+<Example number={1} title="Moving Bump">
+Let the sample space be $(\Omega, \mathcal{F}, P) = ([0,1], \mathcal{B}([0,1]), \lambda)$ (Lebesgue measure).
+For $n \geq 1$ write $n = 2^k + j$ with $0 \leq j < 2^k$, and define
+$$X_n(\omega) = \mathbf{1}_{\left[\frac{j}{2^k},\, \frac{j+1}{2^k}\right]}(\omega).$$
+
+Then $E[X_n] = 2^{-k} \to 0$, and for any $\varepsilon \in (0,1)$:
+$P(X_n > \varepsilon) = 2^{-k} \to 0$, so $X_n \xrightarrow{P} 0$.
+
+However, for every $\omega \in [0,1]$, every dyadic interval contains $\omega$ infinitely often,
+so $X_n(\omega) = 1$ for infinitely many $n$. Hence $X_n(\omega) \not\to 0$ for **every** $\omega$:
+the convergence is in probability only, **not** almost surely.
+</Example>
+
+---
+
+## Beyond i.i.d.: Birkhoff's Ergodic Theorem
+
+<Theorem number={5} name="Birkhoff Ergodic Theorem">
+Let $(\Omega, \mathcal{F}, P)$ be a probability space, $T : \Omega \to \Omega$ a measure-preserving
+transformation, and $f \in L^1(P)$. Then
+$$\frac{1}{n}\sum_{k=0}^{n-1} f(T^k \omega) \xrightarrow{\mathrm{a.s.}} E[f \mid \mathcal{I}](\omega)$$
+where $\mathcal{I} = \{A \in \mathcal{F} : T^{-1}A = A\}$ is the $\sigma$-algebra of $T$-invariant events.
+If $T$ is **ergodic** (i.e., every invariant set has probability 0 or 1), then
+$E[f \mid \mathcal{I}] = E[f]$ a.s., recovering the classical LLN for stationary ergodic sequences.
+</Theorem>
+
+<Remark number={2}>
+The Kolmogorov SLLN is the special case of Birkhoff's theorem where $T$ is the left shift on
+$\mathbb{R}^\mathbb{N}$ and $f(x_1, x_2, \ldots) = x_1$.
+</Remark>
+
+---
+
+## Rate of Convergence: Law of the Iterated Logarithm
+
+The LLN tells us that $\bar{X}_n \to \mu$ a.s., but says nothing about *how fast*.
+
+<Theorem number={6} name="Law of the Iterated Logarithm">
+Let $X_1, X_2, \ldots$ be i.i.d. with $E[X_1] = \mu$ and $\mathrm{Var}(X_1) = \sigma^2 \in (0, \infty)$.
+Then
+$$\limsup_{n \to \infty} \frac{\sqrt{n}\,(\bar{X}_n - \mu)}{\sigma\sqrt{2\log\log n}} = 1 \quad \text{a.s.}$$
+$$\liminf_{n \to \infty} \frac{\sqrt{n}\,(\bar{X}_n - \mu)}{\sigma\sqrt{2\log\log n}} = -1 \quad \text{a.s.}$$
+</Theorem>
+
+<Remark number={3}>
+The LIL says the fluctuations of $\bar{X}_n$ are of order $\sqrt{\log\log n / n}$,
+which decays slower than $1/\sqrt{n}$ (the CLT scale) but faster than any positive power of $1/n$.
+Specifically: the CLT gives distributional behaviour at scale $1/\sqrt{n}$;
+the LIL gives the pathwise envelope at scale $\sqrt{\log\log n/n}$.
+</Remark>

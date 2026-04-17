@@ -1,0 +1,71 @@
+---
+title: Exponential Families
+slug: exponential-family
+topic: Estimation Theory
+difficulty: 4
+tags: [exponential-family, sufficient-statistic, natural-parameter, cumulant, conjugate]
+prerequisites: [sufficiency, mle, fisher-information]
+leadsTo: [conjugate-priors, neyman-pearson]
+description: The exponential family unifies the most common distributions through a canonical form that makes sufficient statistics, MLEs, and conjugate priors explicit and computable.
+keyResults:
+  - "Canonical form: f(x;η) = h(x) exp(η·T(x) − A(η))"
+  - "Cumulant generator: A(η) = log ∫h(x)exp(η·T(x))dx"
+  - "MLE satisfies: E_η[T(X)] = (1/n)Σ T(xᵢ) — moment matching"
+  - "Mean: E[T]=A'(η), Var[T]=A''(η) — natural parameter parameterization"
+---
+
+# Exponential Families
+
+The one-parameter exponential family in **natural (canonical) form** is:
+
+$$f(x;\eta) = h(x)\exp(\eta \cdot T(x) - A(\eta))$$
+
+where:
+- $\eta$ — natural parameter
+- $T(x)$ — sufficient statistic
+- $h(x)$ — base measure (independent of $\eta$)
+- $A(\eta)$ — **log-partition function** (normalization, ensures density integrates to 1)
+
+## The cumulant-generating role of A(η)
+
+The function $A(\eta)$ generates cumulants of $T(X)$:
+
+$$E_\eta[T(X)] = A'(\eta), \quad \text{Var}_\eta[T(X)] = A''(\eta)$$
+
+$A$ is always convex (because $A''(\eta) = \text{Var}[T] \geq 0$), which ensures identifiability.
+
+## Examples in canonical form
+
+| Distribution | $\eta$ | $T(x)$ | $A(\eta)$ |
+|---|---|---|---|
+| Normal($\mu,\sigma^2$) | $\mu/\sigma^2$ | $x$ | $\eta^2\sigma^2/2$ |
+| Bernoulli($p$) | $\log\frac{p}{1-p}$ | $x$ | $\log(1+e^\eta)$ |
+| Poisson($\lambda$) | $\log\lambda$ | $x$ | $e^\eta$ |
+| Exponential($\lambda$) | $-\lambda$ | $x$ | $-\log(-\eta)$ |
+| Gamma($\alpha,\beta$) | $-\beta$ | $x$ | $-\alpha\log(-\eta)-\log\Gamma(\alpha)$ |
+
+## MLE via moment matching
+
+For iid $X_1,\ldots,X_n$ from an exponential family, the MLE satisfies the equation:
+
+$$E_{\hat\eta}[T(X)] = \bar T_n = \frac{1}{n}\sum_{i=1}^n T(X_i)$$
+
+This is **moment matching**: set the theoretical mean of the sufficient statistic equal to its empirical mean. For the Bernoulli, this gives $\hat p = \bar X$. For the Poisson, $\hat\lambda = \bar X$.
+
+## Sufficient statistic and completeness
+
+For iid $X_1,\ldots,X_n$, the **complete sufficient statistic** is $\sum_{i=1}^n T(X_i)$. Completeness follows from the full-rank condition on the natural parameter space. By Lehmann-Scheffé, any unbiased function of this statistic is the UMVUE.
+
+## Multiparameter exponential families
+
+The $k$-parameter exponential family:
+
+$$f(x;\boldsymbol\eta) = h(x)\exp\!\left(\boldsymbol\eta^\top \mathbf{T}(x) - A(\boldsymbol\eta)\right)$$
+
+has Fisher information matrix $I(\boldsymbol\eta) = \nabla^2 A(\boldsymbol\eta)$ — the Hessian of the log-partition function.
+
+## Conjugate priors
+
+Every exponential family has a conjugate prior: $\pi(\eta \mid \tau, n_0) \propto \exp(\tau \cdot \eta - n_0 A(\eta))$, which is itself an exponential family. Posterior updates are additive: $(n_0, \tau) \to (n_0 + n, \tau + \sum T(x_i))$.
+
+This is why Bayesian inference is so clean for exponential families — see the Conjugate Priors concept.
